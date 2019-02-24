@@ -47,7 +47,7 @@ class Menu extends React.Component {
                             <HomeIcon/>
                         </ListItemIcon>
                         <ListItemText>
-                            <Link to={""}>Home</Link>
+                            <Link to={"//"}>Home</Link>
                         </ListItemText>
                     </ListItem>
 

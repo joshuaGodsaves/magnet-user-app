@@ -33,10 +33,10 @@ class App extends Component {
             <React.Fragment>
                 <AppMenu/>
                 <Grid container  className={classes.contentContainer}>
-                    <Switch>
-
-                        <Route path={"/products"} exact component={ProductPage}/>
-                    </Switch>
+                <Switch>
+                    <Route path={"/products"} component={ProductPage}/>
+                </Switch>
+                        
                 </Grid>
             </React.Fragment>
             </BrowserRouter>
