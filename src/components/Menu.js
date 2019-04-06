@@ -18,6 +18,7 @@ import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import ListSubheader from "@material-ui/core/es/ListSubheader";
+import { AddShoppingCart, Category, CategorySharp, LocalLaundryService, RoomService, Business } from "@material-ui/icons";
 let styles = {
   root: {},
   menuBucket: {
@@ -62,27 +63,27 @@ class Menu extends React.Component {
           <List>
             <ListSubheader> Store </ListSubheader>
             <Divider />
-            <ListItem component={Link} to={"/category"}>
+            <ListItem component={Link} to={"/categories"}>
               <ListItemIcon>
-                <ProductIcon />
+                <CategorySharp/>
               </ListItemIcon>
               <ListItemText primary={"category"} />
             </ListItem>
             <ListItem component={Link} to={"/products"}>
               <ListItemIcon>
-                <ProductIcon />
+                <AddShoppingCart/>
               </ListItemIcon>
               <ListItemText primary={"products"} />
             </ListItem>
             <ListItem component={Link} to={"/services"}>
               <ListItemIcon>
-                <BlogIcon />
+                <RoomService/>
               </ListItemIcon>
               <ListItemText primary={"services"} />
             </ListItem>
             <ListItem component={Link} to={"/orders"}>
               <ListItemIcon>
-                <BlogIcon />
+                <Business/>
               </ListItemIcon>
               <ListItemText primary={"Sales"} />
             </ListItem>

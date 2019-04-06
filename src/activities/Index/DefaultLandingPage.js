@@ -43,11 +43,9 @@ class LandingPage extends React.Component {
 
         <Grid container
               justify={"center"}
-          spacing={8}
-          style={{ padding: "0px 8px", margin: "8px 0" }}
         >
           {[1, 2, 3].map(v => (
-            <Grid item col={1} style={{}}>
+            <Grid item style={{padding:8}}>
               <div
                 style={{width:270,
                   display: "flex",

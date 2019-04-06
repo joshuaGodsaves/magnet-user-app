@@ -1,31 +1,13 @@
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
-import ArrowRightIcon from "@material-ui/icons/ArrowForward";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 import Toolbar from "@material-ui/core/Toolbar";
 import Button from "@material-ui/core/Button";
-import GridListTile from "@material-ui/core/GridListTile";
-import { VerifiedUser } from "@material-ui/icons";
-import {
-  Checkbox,
-  Divider,
-  GridListTileBar,
-  Icon,
-  MenuItem,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow
-} from "@material-ui/core";
-import GridList from "@material-ui/core/GridList";
-import { Menu } from "@material-ui/core";
-import MenuList from "@material-ui/core/MenuList";
+import AppContext from "../../AppContext"
+import {Checkbox, Table, TableBody, TableCell, TableHead, TableRow} from "@material-ui/core";
 import PageAppBar from "../../components/ActivityPrimaryAppBar";
+import axios from 'axios';
 
 let styles = {
   ProductItemRoot: {
@@ -77,6 +59,18 @@ class TableProductsView extends React.Component {
       });
     };
   };
+
+  componentWillMount(){
+    axios.get(`http://localhost:5000/api/store/${this.context.user.store._id}/product`, {
+      headers:{
+        "X-auth-license": this.context.user.token
+      }
+    }).then(v=>{
+      let products= v.data.items
+      this.setState({products: products})
+    }).catch(v=> console.log(v))
+  }
+  static contextType= AppContext
 
   render() {
     let { classes } = this.props;
@@ -160,7 +154,6 @@ class TableProductsView extends React.Component {
   }
 }
 let WithStylesTableProductsView = withStyles(styles)(TableProductsView);
-
 class Products extends React.Component {
   state = {
     ui: {
@@ -183,43 +176,47 @@ class Products extends React.Component {
     });
   };
 
+  static contextType= AppContext
   render() {
     let anchorEl = this.state.ui.create.anchorEl;
     let open = Boolean(anchorEl);
     let { classes, theme } = this.props;
+    console.log("from products")
+    console.log( this.context)
     return (
       <React.Fragment>
-        <PageAppBar>
-          <div>
-            <Typography variant={"title"}> Products</Typography>
-          </div>
-          <div style={{ display: "flex" }}>
-            <Button
-              variant={"contained"}
-              size={"medium"}
-              style={{ marginLeft: 8, marginRight: 8 }}
-              to={"/products/product"}
-              component={Link}
-            >
-              Add product
-            </Button>
-            <Button
-              variant={"contained"}
-              size={"medium"}
-              style={{ marginLeft: 8, marginRight: 8 }}
-              component={Link}
-              to={"/categories/category"}
-            >
-              Create category
-            </Button>
-          </div>
-        </PageAppBar>
-        <div style={{ padding: "8px 8px" }}>
-          <TableProductsView />
-        </div>
+                <PageAppBar>
+                  <div>
+                    <Typography variant={"title"}> Products</Typography>
+                  </div>
+                  <div style={{ display: "flex" }}>
+                    <Button
+                      variant={"contained"}
+                      size={"medium"}
+                      style={{ marginLeft: 8, marginRight: 8 }}
+                      to={"/products/product"}
+                      component={Link}
+                    >
+                      Add product
+                    </Button>
+                    <Button
+                      variant={"contained"}
+                      size={"medium"}
+                      style={{ marginLeft: 8, marginRight: 8 }}
+                      component={Link}
+                      to={"/categories/category"}
+                    >
+                      Create category
+                    </Button>
+                  </div>
+                </PageAppBar>
+                <div style={{ padding: "8px 8px" }}>
+                  <TableProductsView />
+                </div>
       </React.Fragment>
     );
   }
 }
 
-export default withStyles(styles)(Products);
+
+export default withStyles(styles)(Products)

@@ -29,8 +29,9 @@ import AppContext from "./AppContext";
 import Drawer from "@material-ui/core/Drawer";
 import axios from "axios";
 import { Menu } from "@material-ui/icons";
+import SignupLogin from "./SignupSignin"
 
-let drawerWidth = 210;
+let drawerWidth = 220;
 let styles = theme => ({
   contentContainer: {
     paddingTop: 0,
@@ -55,50 +56,13 @@ let styles = theme => ({
   }
 });
 
-function LogIn(props) {
-  let collectUserData = loginUser => {
-    return e => {
-      let userName = document.getElementById("userName").value;
-      let userPassword = document.getElementById("userPassword").value;
-      loginUser(userName, userPassword);
-    };
-  };
-  return (
-    <React.Fragment>
-      <Grid container justifyContent={"center"} justify={"center"}>
-        <Grid item style={{ margin: "60px 0" }} xs={"11"} sm={7} md={4}>
-          <Paper style={{ padding: "32px 32px" }}>
-            <div style={{ margin: "16px 0px" }}>
-              <FormControl fullWidth>
-                <InputLabel>User name</InputLabel>
-                <Input id={"userName"} />
-              </FormControl>
-            </div>
-            <div style={{ margin: "16px 0px" }}>
-              <FormControl fullWidth>
-                <InputLabel>User password</InputLabel>
-                <Input id={"userPassword"} />
-              </FormControl>
-            </div>
-            <Button
-              variant={"contained"}
-              onClick={collectUserData(props.loginCb)}
-              style={{ margin: "16px 0px" }}
-            >
-              Log in
-            </Button>
-          </Paper>
-        </Grid>
-      </Grid>
-    </React.Fragment>
-  );
-}
 
 class App extends Component {
   constructor(props) {
     super(props);
-    ProductIndexPage.contextType = App.contextTypes;
+    ProductIndexPage.contextType = App.contextType;
     ServiceIndexPage.contextType = App.contextType;
+    CategoryIndexPage.contextType= App.contextType
   }
   state = {
     appBar: {
@@ -106,42 +70,44 @@ class App extends Component {
     },
     drawerOpen: true,
     user: {
-      userToken: "token",
+      token: undefined,
       userName: undefined,
-      password: undefined,
-      loggedIn: false
-    },
-    store: {
-      storeToken: undefined
+      loggedIn: false,
+      store: undefined
     }
   };
 
   static contextType = AppContext;
 
-  loginUser = (userName, userPassword) => {
+  loggedInUser = (userName, token, store) => {
+
     window.localStorage.setItem(
       "user",
       JSON.stringify({
-        userName: "userName",
-        password: "userPassord",
-        userToken: "token"
+        userName: userName,
+        userToken: token,
+        store: store
       })
     );
-    this.setState({
-      userName: userName,
-      userPassword: userPassword,
-      loggedIn: true
+    this.setState(state=>{
+      state.user= {
+        userName: userName,
+        token: token,
+        loggedIn: true,
+        store: store
+      }
+      return state
     });
   };
 
   checkIfUserIsLoggedInAndLogin = () => {
     let user = JSON.parse(window.localStorage.getItem("user"));
-    if (user.userName) {
+    if (user && user.userName) {
       //use is loggedIn, authomatically log in user with details.
-      this.loginUser(user.userName, user.password);
+      this.loggedInUser(user.userName, user.userToken, user.store)
       return;
     }
-    return false;
+    return false
   };
 
   componentWillMount() {
@@ -172,7 +138,6 @@ class App extends Component {
 
   render() {
     let { classes } = this.props;
-
     let mainApp = (
       <React.Fragment>
         <AppBar
@@ -201,7 +166,6 @@ class App extends Component {
               this.state.drawerOpen ? classes.drawer : classes.drawerOut
             }
           >
-
             <Drawer
               variant={"persistent"}
               open={this.state.drawerOpen}
@@ -231,15 +195,14 @@ class App extends Component {
         </div>
       </React.Fragment>
     );
-
     return (
       <BrowserRouter>
         <React.Fragment>
-          <AppContext.Provider value={this.state.user}>
-            {this.state.loggedIn ? (
+          <AppContext.Provider value={{user:this.state.user}}>
+            {this.state.user.loggedIn ? (
               mainApp
             ) : (
-              <LogIn show loginCb={this.loginUser} />
+                <SignupLogin loggedInUser={this.loggedInUser}/>
             )}
           </AppContext.Provider>
         </React.Fragment>
@@ -247,5 +210,4 @@ class App extends Component {
     );
   }
 }
-
 export default withStyles(styles)(App);

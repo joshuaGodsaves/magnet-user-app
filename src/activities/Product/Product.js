@@ -3,33 +3,29 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Grid from "@material-ui/core/Grid";
 import Chip from "@material-ui/core/Chip";
 import Typography from "@material-ui/core/Typography";
-import ExpansionPanel from "@material-ui/core/ExpansionPanel";
-import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
-import ExpansionPanelActions from "@material-ui/core/ExpansionPanelActions";
-import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
-import DropDownIcon from "@material-ui/icons/ArrowDropDown";
 import Button from "@material-ui/core/Button";
-import { Link } from "react-router-dom";
 import {
-  Tabs,
-  ButtonBase,
-  Toolbar,
-  Tab,
-  FormHelperText,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  ListItemAvatar,
-  ListItemText,
-  List,
-  InputBase,
-  Input
+    ButtonBase,
+    Checkbox,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    Divider,
+    FormControl,
+    FormHelperText,
+    FormLabel,
+    InputBase,
+    List,
+    ListItem,
+    ListItemText,
+    OutlinedInput as Input,
+    Tab,
+    Tabs
 } from "@material-ui/core";
 import PageAppBar from "../../components/ActivityPrimaryAppBar";
-import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
-import ListItem from "@material-ui/core/ListItem";
+import AppContext from "../../AppContext";
+import axios from "axios";
+import Uploader from "../../components/DynamicUploadHandler";
 
 let styles = {
   listItem: {
@@ -51,8 +47,8 @@ let styles = {
     display: "flex",
     justifyContent: "space-between"
   },
-  primaryFormArea: {
-    padding: "16px 32px"
+  primarySpacing: {
+    padding: "16px 24px"
   },
   rootFormControls: {
     margin: "8px 0"
@@ -63,30 +59,32 @@ let styles = {
     justifyItems: "space-between"
   }
 };
+
 class Product extends React.Component {
   state = {
     currentTab: 0,
-    categoryDialogOpen: false,
+    storeCategories: [],
+    categoryFormOpen: false,
+    categoryDialogOpen: false, editGalleryItemSelectorDialogOpen: false,
+      currentGalleryItemEditAction:{
+        url: undefined,
+          index: undefined
+      },
+    newCategoryName: undefined,
     product: {
-      category: undefined,
+      categories: [],
       gallery: [
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
         undefined
       ],
       tags: [],
       title: undefined,
       description: undefined,
-      priceUpperBound: undefined,
-      priceLowerBound: undefined,
+      costPrice: undefined,
+      sellingPrice: undefined,
       mainImage: undefined
     }
   };
-
-  setUpenv = () => {};
+  static contextType = AppContext;
   toggleCategoryDialog = () => {
     this.setState(state => {
       state.categoryDialogOpen = !state.categoryDialogOpen;
@@ -94,8 +92,11 @@ class Product extends React.Component {
     });
   };
   addNewProduct = () => {};
+
   updateProduct = () => {};
+
   getProductDetail = () => {};
+
   tabChange = (e, v) => {
     this.setState({ currentTab: v });
   };
@@ -109,6 +110,114 @@ class Product extends React.Component {
       });
     };
   };
+
+  toggleCategoryForm = () => {
+    this.setState(state => {
+      state.categoryFormOpen = !state.categoryFormOpen;
+      return state;
+    });
+  };
+  loadCategories = () => {
+    axios
+      .get(
+        `http://localhost:5000/api/store/${
+          this.context.user.store._id
+        }/category`,
+        {
+          headers: {
+            "X-auth-license": this.context.user.token
+          }
+        }
+      )
+      .then(v => {
+        console.log(v);
+        let categories = v.data.items;
+        this.setState({ storeCategories: categories });
+      })
+      .catch(v => console.log(v));
+  };
+
+  watchCatName = e => {
+    e.persist();
+    this.setState({ newCategoryName: e.target.value });
+  };
+  saveNewCategory = event => {
+    event.persist();
+    axios
+      .post(
+        `http://localhost:5000/api/store/${
+          this.context.user.store._id
+        }/category`,
+        {
+          title: this.state.newCategoryName
+        },
+        {}
+      )
+      .then(v => {
+        console.log(v);
+        this.loadCategories();
+      })
+      .catch(v => console.log(v));
+  };
+
+  selectedCategory= (id)=>{
+      return (event, v)=>{
+          console.log(v)
+          this.setState(state=>{
+              if(v){
+                  state.product.categories.push(id)
+              }else{
+                  state.product.categories= state.product.categories.filter(v=> {return v!==id} )
+              }
+
+              console.log(state.product)
+              return state;
+          })
+      }
+  }
+
+  watchTags = (event)=>{
+      event.persist()
+      let arr= event.target.value.split(" ")
+      this.setState(state=>{
+          state.product.tags= arr;
+          return state
+      })
+  }
+  saveProduct = event => {
+    console.log(this.state.product);
+  };
+
+  componentDidMount() {
+        this.loadCategories()
+  }
+  watchFileChange= (event)=>{
+      event.persist()
+      let reader= new FileReader()
+      //console.log(event.target.files[0])
+      reader.readAsDataURL(event.target.files[0])
+      console.log(reader.result)
+
+  }
+
+    toggleGalleryItemSelectorDialogOpen =(url, index)=>{
+      return ()=>{
+          this.setState(state=>{
+              state.currentGalleryItemEditAction.url= url
+              state.currentGalleryItemEditAction.index= index
+              state.editGalleryItemSelectorDialogOpen= true
+              return state;
+          })
+      }
+    }
+
+    toggleGalleryItemSelectorDialogClose =(url, index)=>{
+            this.setState(state=>{
+                state.editGalleryItemSelectorDialogOpen= false
+                return state;
+            })
+    }
+
   render() {
     let { classes } = this.props;
 
@@ -116,7 +225,7 @@ class Product extends React.Component {
       <React.Fragment>
         <Dialog
           open={this.state.categoryDialogOpen}
-          maxWidth={"sm"}
+          maxWidth={"xs"}
           fullWidth
           onClose={this.toggleCategoryDialog}
         >
@@ -125,19 +234,66 @@ class Product extends React.Component {
             className={classes.xPadding}
           >
             <Typography variant={"h6"}> Select category</Typography>
-            <Button variant={"text"}>Add Category</Button>
+            <Button variant={"text"} onClick={this.toggleCategoryForm}>
+              Add Category
+            </Button>
           </DialogActions>
-          <DialogContent>
+          <Divider />
+          <DialogContent style={{ padding: 0 }}>
+            <div
+              style={{
+                display: this.state.categoryFormOpen ? "block" : "none"
+              }}
+            >
+              <FormControl
+                fullWidth
+                style={{ padding: "16px 24px", boxSizing: "border-box" }}
+              >
+                <FormLabel>Category title</FormLabel>
+                <Input
+                  size={"small"}
+                  onChange={this.watchCatName}
+                  value={this.state.newCategoryName}
+                />
+                <FormHelperText>Add category and edit later</FormHelperText>
+              </FormControl>
+              <div style={{ padding: "8px 24px", boxSizing: "border-box" }}>
+                <Button
+                  variant={"text"}
+                  size={"small"}
+                  onClick={this.saveNewCategory}
+                >
+                  Save
+                </Button>{" "}
+                <Button
+                  variant={"text"}
+                  size={"small"}
+                  onClick={this.toggleCategoryForm}
+                >
+                  Cancel
+                </Button>
+              </div>
+              <Divider />
+            </div>
             <List color={"primary"}>
-              <ListItem className={classes.listItem} component={ButtonBase}>
-                <ListItemText>Category text</ListItemText>
-              </ListItem>
-              <ListItem className={classes.listItem} component={ButtonBase}>
-                <ListItemText>Category text</ListItemText>
-              </ListItem>
-              <ListItem className={classes.listItem} component={ButtonBase}>
-                <ListItemText>Category text</ListItemText>
-              </ListItem>
+              {this.state.storeCategories.length == 0 ? (
+                <Typography style={{ padding: 24 }} align={"center"}>
+                  {" "}
+                  You have'nt created any category for your store yet
+                </Typography>
+              ) : (
+                this.state.storeCategories.map(v => (
+                  <ListItem className={classes.listItem}>
+                    <Checkbox
+                        onChange={this.selectedCategory(v._id)}
+                      checked={this.state.product.categories.some(
+                        id => id == v._id)}
+                    />{" "}
+                    <ListItemText>{v.title}</ListItemText>
+                  </ListItem>
+                ))
+              )}
+
             </List>
           </DialogContent>
           <DialogActions className={classes.xPadding} s>
@@ -146,15 +302,57 @@ class Product extends React.Component {
         </Dialog>
       </React.Fragment>
     );
+    let galleryItemSelector= (
+        <React.Fragment>
+            <Dialog
+                open={this.state.editGalleryItemSelectorDialogOpen}
+                fullScreen
+                fullWidth
+                style={{zIndex:30000}}
+                onClose={this.toggleGalleryItemSelectorDialogClose}
+            >
+                <DialogActions
+                    style={{ display: "flex", justifyContent: "space-between" }}
+                    className={classes.xPadding}
+                >
+                    <Typography variant={"h6"}> Select Image</Typography>
+                    <Button variant={"text"} onClick={this.toggleGalleryItemSelectorDialog}>
+                        Upload
+                    </Button>
+                </DialogActions>
+                <Divider />
+                <DialogContent style={{ padding: 0 }}>
+                    <Uploader noPreview onUploadEnd={this.newFileUploadEnd} onUploadEnd={this.newFileUploadEnd} />
+                    <Grid container>
+
+                    </Grid>
+                </DialogContent>
+                <DialogActions className={classes.xPadding} s>
+                    <Button onClick={this.toggleGalleryItemSelectorDialogClose}> Cancel</Button>
+                </DialogActions>
+            </Dialog>
+        </React.Fragment>
+    )
+    let imageUploadComp= (
+        <React.Fragment>
+            <div style={{width:200, overflow:"hidden", padding:"24px 24px", border:"1px solid black", position:"relative"}}>
+                <ButtonBase style={{width:"100%", padding:"16px", position: "absolute", top:0, left:0, height:"100%"}}
+                onClick={()=>{
+                    document.getElementById("file").click()
+                }}>Upload Image</ButtonBase>
+                <input type={"file"} id={"file"} onChange={this.watchFileChange}/>
+            </div>
+        </React.Fragment>
+    )
 
     let primaryComponent = (
       <React.Fragment>
         {categorySelector}
         <Grid container>
           <Grid item sm={7} xs={12}>
-            <div className={classes.primaryFormArea}>
+            <div className={classes.primarySpacing}>
               <FormControl fullWidth className={classes.rootFormControls}>
-                <InputLabel>Product title</InputLabel>
+                <FormLabel> Produc title</FormLabel>
                 <Input
                   id="productTitle"
                   name="product-title"
@@ -162,7 +360,7 @@ class Product extends React.Component {
                 />
               </FormControl>
               <FormControl fullWidth className={classes.rootFormControls}>
-                <InputLabel>Product Description</InputLabel>
+                <FormLabel>Product Description</FormLabel>
                 <Input
                   id="productDescription"
                   name="product-description"
@@ -170,20 +368,12 @@ class Product extends React.Component {
                 />
               </FormControl>
               <FormControl fullWidth className={classes.rootFormControls}>
-                <InputLabel>Product cost Price</InputLabel>
-                <Input
-                  id="productCostPrice"
-                  name="product-c-price"
-                  onChange={this.watchInput("priceLowerBound")}
-                />
+                <FormLabel>Product cost Price</FormLabel>
+                <Input onChange={this.watchInput("costPrice")} />
               </FormControl>
               <FormControl fullWidth className={classes.rootFormControls}>
-                <InputLabel>Product selling price</InputLabel>
-                <Input
-                  id="productSellingPrice"
-                  name="product-s-price"
-                  onChange={this.watchInput("priceUpperBound")}
-                />
+                <FormLabel>Product selling price</FormLabel>
+                <Input onChange={this.watchInput("sellingPrice")} />
               </FormControl>
               <div />
             </div>
@@ -195,7 +385,7 @@ class Product extends React.Component {
             xs={12}
             style={{
               height: "500%",
-              background: "ghostwhite",
+              background: "pink",
               padding: "32px 32px"
             }}
           >
@@ -218,7 +408,9 @@ class Product extends React.Component {
                   border: "5px solid grey"
                 }}
               />
-              <Button className={classes.ymargin}>Upload Image</Button>
+
+                {imageUploadComp}
+
             </div>
             <Typography> Core Options</Typography>
             <div style={{ padding: 16, background: "white" }}>
@@ -239,11 +431,15 @@ class Product extends React.Component {
                 Select category
               </Button>
             </div>
-            <div className={classes}>
+            <div>
+                <div className={classes.ymargin}>
+                    {this.state.product.tags.map(v=> (<Chip label={v} style={{margin:"8"}}/>))}
+                </div>
               <FormControl fullWidth>
                 <InputBase
                   multiline
                   style={{ background: "white", padding: "16px" }}
+                  onChange={this.watchTags}
                 />
                 <FormHelperText>
                   Enter product tags and seperate with spaces
@@ -254,27 +450,49 @@ class Product extends React.Component {
         </Grid>
       </React.Fragment>
     );
+
+
+    let visualComponent= (
+        <React.Fragment>
+            {galleryItemSelector}
+            <Grid container className={classes.primarySpacing}>
+                <Grid item xs={12}>
+                    <Typography variant={"h6"}>Gallery</Typography>
+                    <Grid container spacing={8}>
+                        {this.state.product.gallery.map((url,index)=>(
+                            <Grid item onClick={this.toggleGalleryItemSelectorDialogOpen(index, url)}>
+                                <div style={{width:"200px", height:"200px", background:"red"}}></div>
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Grid>
+
+
+            </Grid>
+        </React.Fragment>
+    )
     return (
       <React.Fragment>
         <PageAppBar nospacing>
-            <Tabs
-              style={{ padding: 0 }}
-              variant={"scrollable"}
-              value={this.state.currentTab}
-              onChange={this.tabChange}
-            >
-              <Tab label={"Primary"} style={{ background: "red" }} />
+          <Tabs
+            style={{ padding: 0 }}
+            variant={"scrollable"}
+            value={this.state.currentTab}
+            onChange={this.tabChange}
+          >
+            <Tab label={"Primary"} style={{ background: "red" }} />
               <Tab
-                label={"Variants & Attributes"}
-                style={{ background: "red" }}
+                  label={"Visuals"}
+                  style={{ background: "red" }}
               />
-              <Tab label={"Advanced"} style={{ background: "red" }} />
-            </Tabs>
-            <div>
-              <Button>Save</Button>
-            </div>
+            <Tab label={"Advanced"} style={{ background: "red" }} />
+          </Tabs>
+          <div>
+            <Button onClick={this.save}>Save</Button>
+          </div>
         </PageAppBar>
         {this.state.currentTab == 0 && primaryComponent}
+          {this.state.currentTab == 1 && visualComponent}
       </React.Fragment>
     );
   }
