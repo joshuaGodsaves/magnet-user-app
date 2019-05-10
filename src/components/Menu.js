@@ -9,7 +9,6 @@ import ListItemIcon from "@material-ui/core/es/ListItemIcon/ListItemIcon";
 import MenuIcon from "@material-ui/icons/Menu";
 import Toolbar from "@material-ui/core/es/Toolbar/Toolbar";
 import HomeIcon from "@material-ui/icons/Home";
-import UserIcon from "@material-ui/icons/VerifiedUser";
 import ListItemText from "@material-ui/core/ListItemText";
 import ProductIcon from "@material-ui/icons/AddBoxRounded";
 import BlogIcon from "@material-ui/icons/TextFormat";
@@ -18,7 +17,9 @@ import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import ListSubheader from "@material-ui/core/es/ListSubheader";
-import { AddShoppingCart, Category, CategorySharp, LocalLaundryService, RoomService, Business } from "@material-ui/icons";
+import Avatar from "@material-ui/core/Avatar"
+import { AddShoppingCartRounded as AddShoppingCart , Category, CategorySharp, PeopleOutline, RoomService, Business, VerifiedUser} from "@material-ui/icons";
+
 let styles = {
   root: {},
   menuBucket: {
@@ -50,15 +51,17 @@ class Menu extends React.Component {
     let menuList = (
       <div>
         <Toolbar position={"relative"}>
-          <Typography variant={"title"}> Primary Menu</Typography>
+           <div>
+             L-MAGNET
+           </div>
         </Toolbar>
         <Divider/>
         <List style={{ paddingTop: 0 }}>
           <ListItem component={Link} to={"/"}>
             <ListItemIcon>
-              <HomeIcon />
+              <Avatar />
             </ListItemIcon>
-            <ListItemText primary={"home"} />
+            <ListItemText primary={"Admin"} />
           </ListItem>
           <List>
             <ListSubheader> Store </ListSubheader>
@@ -75,23 +78,36 @@ class Menu extends React.Component {
               </ListItemIcon>
               <ListItemText primary={"products"} />
             </ListItem>
-            <ListItem component={Link} to={"/services"}>
-              <ListItemIcon>
-                <RoomService/>
-              </ListItemIcon>
-              <ListItemText primary={"services"} />
-            </ListItem>
+            {/*<ListItem component={Link} to={"/services"}>*/}
+              {/*<ListItemIcon>*/}
+                {/*<RoomService/>*/}
+              {/*</ListItemIcon>*/}
+              {/*<ListItemText primary={"services"} />*/}
+            {/*</ListItem>*/}
             <ListItem component={Link} to={"/orders"}>
               <ListItemIcon>
                 <Business/>
               </ListItemIcon>
               <ListItemText primary={"Sales"} />
             </ListItem>
+            <ListItem component={Link} to={"/customers"}>
+              <ListItemIcon>
+                <PeopleOutline/>
+              </ListItemIcon>
+              <ListItemText primary={"Customers"} />
+            </ListItem>
           </List>
-
+          <ListSubheader>Store Theme</ListSubheader>
+          <Divider />
+          <ListItem  component={Link} to={"/themes"}>
+            <ListItemIcon>
+              <BlogIcon />
+            </ListItemIcon>
+            <ListItemText primary={"theme"} />
+          </ListItem>
           <ListSubheader> Utilities</ListSubheader>
           <Divider />
-          <ListItem component={Link} to={"/blog"}>
+          <ListItem component={Link} to={"/blog"} disabled>
             <ListItemIcon>
               <BlogIcon />
             </ListItemIcon>

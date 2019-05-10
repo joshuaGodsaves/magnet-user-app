@@ -21,7 +21,7 @@ class Index extends React.Component {
       <React.Fragment>
         <Switch>
           <Route path={"/categories"} exact component={CategoriesActivity} />
-          <Route path={"/categories/category"} exact component={CategoryActivity} />
+          <Route path={"/categories/:category"} exact component={CategoryActivity} />
         </Switch>
       </React.Fragment>
     );

@@ -22,7 +22,7 @@ class Index extends React.Component {
       <React.Fragment>
         <Switch>
           <Route path={"/products"} exact  component={ProductsActivity}/>
-          <Route path={"/products/product"} exact component={ProductActivity} />
+          <Route path={"/products/:product"} exact component={ProductActivity} />
         </Switch>
       </React.Fragment>
     );

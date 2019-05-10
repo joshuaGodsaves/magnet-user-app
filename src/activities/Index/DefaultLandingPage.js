@@ -1,6 +1,6 @@
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
-import { Typography, AppBar, Toolbar, GridList } from "@material-ui/core";
+import { Typography, AppBar, Toolbar, GridList, Paper } from "@material-ui/core";
 import Grid from "@material-ui/core/es/Grid";
 import GridListTile from "@material-ui/core/GridListTile";
 import PageAppBar from "../../components/ActivityPrimaryAppBar";
@@ -43,22 +43,20 @@ class LandingPage extends React.Component {
 
         <Grid container
               justify={"center"}
+              spacing={24}
         >
           {[1, 2, 3].map(v => (
-            <Grid item style={{padding:8}}>
-              <div
-                style={{width:270,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  background: "lightblue",
-                  height: "100%",
-                  justifyContent: "center"
-                }}
-              >
-                <Typography variant={"h1"}>0</Typography>
-                <Typography>Products</Typography>
-              </div>
+            <Grid item>
+                <Paper  style={{padding:8, width:270,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    background: "lightblue",
+                    height: "100%",
+                    justifyContent: "center"}}>
+                        <Typography variant={"h1"}>0</Typography>
+                        <Typography>Products</Typography>
+                </Paper>
             </Grid>
           ))}
         </Grid>

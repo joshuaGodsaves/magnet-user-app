@@ -4,498 +4,607 @@ import Grid from "@material-ui/core/Grid";
 import Chip from "@material-ui/core/Chip";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
+import {CloudUpload as UploadIcon, Link as LinkIcon, SelectAll as SelectIcon} from "@material-ui/icons";
 import {
-    ButtonBase,
+    SnackbarContent,
+    Snackbar, ButtonBase,
+    FormGroup,
     Checkbox,
-    Dialog,
+    Dialog,Paper,
     DialogActions,
     DialogContent,
     Divider,
     FormControl,
     FormHelperText,
     FormLabel,
+    IconButton,
     InputBase,
     List,
     ListItem,
     ListItemText,
     OutlinedInput as Input,
     Tab,
-    Tabs
+    Tabs,
+    Switch
 } from "@material-ui/core";
+import ImageSelectionComponent from "../../components/ImageSelectionComponent"
 import PageAppBar from "../../components/ActivityPrimaryAppBar";
 import AppContext from "../../AppContext";
 import axios from "axios";
 import Uploader from "../../components/DynamicUploadHandler";
+import CKEditor from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 let styles = {
-  listItem: {
-    background: "orange"
-  },
-  xPadding: {
-    padding: "0px 16px"
-  },
-  margin: {
-    marginBottom: 8,
-    marginTop: 8
-  },
-  ymargin: {
-    marginTop: 16,
-    marginBottom: 16
-  },
-  toolBar: {
-    background: "white",
-    display: "flex",
-    justifyContent: "space-between"
-  },
-  primarySpacing: {
-    padding: "16px 24px"
-  },
-  rootFormControls: {
-    margin: "8px 0"
-  },
-  flexBetween: {
-    display: "flex",
-    justifyContent: "space-between",
-    justifyItems: "space-between"
-  }
+    listItem: {
+        background: "orange"
+    },
+    xPadding: {
+        padding: "0px 16px"
+    },
+    margin: {
+        marginBottom: 8,
+        marginTop: 8
+    },
+    ymargin: {
+        marginTop: 16,
+        marginBottom: 16
+    },
+    toolBar: {
+        background: "white",
+        display: "flex",
+        justifyContent: "space-between"
+    },
+    rootFormControls: {
+        margin: "8px 0"
+    },
+    flexCenter: {
+        display: "flex",
+        justifyContent: "center",
+    }
 };
 
 class Product extends React.Component {
-  state = {
-    currentTab: 0,
-    storeCategories: [],
-    categoryFormOpen: false,
-    categoryDialogOpen: false, editGalleryItemSelectorDialogOpen: false,
-      currentGalleryItemEditAction:{
-        url: undefined,
-          index: undefined
-      },
-    newCategoryName: undefined,
-    product: {
-      categories: [],
-      gallery: [
-        undefined
-      ],
-      tags: [],
-      title: undefined,
-      description: undefined,
-      costPrice: undefined,
-      sellingPrice: undefined,
-      mainImage: undefined
+    constructor(props) {
+        super(props)
     }
-  };
-  static contextType = AppContext;
-  toggleCategoryDialog = () => {
-    this.setState(state => {
-      state.categoryDialogOpen = !state.categoryDialogOpen;
-      return state;
-    });
-  };
-  addNewProduct = () => {};
 
-  updateProduct = () => {};
-
-  getProductDetail = () => {};
-
-  tabChange = (e, v) => {
-    this.setState({ currentTab: v });
-  };
-
-  watchInput = propName => {
-    return event => {
-      event.persist();
-      this.setState(state => {
-        state.product[propName] = event.target.value;
-        return state;
-      });
-    };
-  };
-
-  toggleCategoryForm = () => {
-    this.setState(state => {
-      state.categoryFormOpen = !state.categoryFormOpen;
-      return state;
-    });
-  };
-  loadCategories = () => {
-    axios
-      .get(
-        `http://localhost:5000/api/store/${
-          this.context.user.store._id
-        }/category`,
-        {
-          headers: {
-            "X-auth-license": this.context.user.token
-          }
-        }
-      )
-      .then(v => {
-        console.log(v);
-        let categories = v.data.items;
-        this.setState({ storeCategories: categories });
-      })
-      .catch(v => console.log(v));
-  };
-
-  watchCatName = e => {
-    e.persist();
-    this.setState({ newCategoryName: e.target.value });
-  };
-  saveNewCategory = event => {
-    event.persist();
-    axios
-      .post(
-        `http://localhost:5000/api/store/${
-          this.context.user.store._id
-        }/category`,
-        {
-          title: this.state.newCategoryName
+    state = {
+        updated: false,
+        currentSelectedGalleryItem: undefined,
+        isNewProduct: false,
+        productId: undefined,
+        selectMainImageDrawerOpen: false,
+        currentTab: 0,
+        storeCategories: [],
+        categoryFormOpen: false,
+        categoryDialogOpen: false, editGalleryItemSelectorDialogOpen: false,
+        currentGalleryItemEditAction: {
+            url: undefined,
+            index: undefined
         },
-        {}
-      )
-      .then(v => {
-        console.log(v);
-        this.loadCategories();
-      })
-      .catch(v => console.log(v));
-  };
+        newCategoryName: undefined,
+        product: {
+            categories: [],
+            gallery: [
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined
+            ],
+            count: undefined,
+            tags: [],
+            title: undefined,
+            description: undefined,
+            caption: undefined,
+            costPrice: undefined,
+            sellingPrice: undefined,
+            mainImageLink: undefined,
+            articleLink: undefined,
+            variants: [],
+            available: false
+        },
+        mainProductObj: {}
+    };
+    static contextType = AppContext;
+    toggleCategoryDialog = () => {
+        this.setState(state => {
+            state.categoryDialogOpen = !state.categoryDialogOpen;
+            return state;
+        });
+    };
 
-  selectedCategory= (id)=>{
-      return (event, v)=>{
-          console.log(v)
-          this.setState(state=>{
-              if(v){
-                  state.product.categories.push(id)
-              }else{
-                  state.product.categories= state.product.categories.filter(v=> {return v!==id} )
-              }
+    updateProduct = () => {
+        let {product, mainProductObj} = this.state
+        let {match: {params}} = this.props
+        axios
+            .put(
+                `http://localhost:5000/api/store/${this.context.user.store._id}/product/${params.product}`,
+                this.state.product,
+                {
+                    headers: {
+                        "X-auth-license": this.context.user.token
+                    }
+                }
+            ).then(v => {
+            console.log(v)
+            this.setState({updated: true})
+            setTimeout(() => {
+                this.setState({updated: false})
+            }, 2000)
+            this.loadProduct(params.product)
 
-              console.log(state.product)
-              return state;
-          })
-      }
-  }
+        }).catch(v => console.log(v))
 
-  watchTags = (event)=>{
-      event.persist()
-      let arr= event.target.value.split(" ")
-      this.setState(state=>{
-          state.product.tags= arr;
-          return state
-      })
-  }
-  saveProduct = event => {
-    console.log(this.state.product);
-  };
+    };
 
-  componentDidMount() {
-        this.loadCategories()
-  }
-  watchFileChange= (event)=>{
-      event.persist()
-      let reader= new FileReader()
-      //console.log(event.target.files[0])
-      reader.readAsDataURL(event.target.files[0])
-      console.log(reader.result)
+    tabChange = (e, v) => {
+        this.setState({currentTab: v});
+    };
 
-  }
+    watchInput = propName => {
+        // let oldObj= !this.state.isNewProduct
+        //       // if(oldObj){
+        //       //
+        //       // }
+        return event => {
+            event.persist();
+            this.setState(state => {
+                state.product[propName] = event.target.value;
+                return state;
+            });
+        };
+    };
 
-    toggleGalleryItemSelectorDialogOpen =(url, index)=>{
-      return ()=>{
-          this.setState(state=>{
-              state.currentGalleryItemEditAction.url= url
-              state.currentGalleryItemEditAction.index= index
-              state.editGalleryItemSelectorDialogOpen= true
-              return state;
-          })
-      }
+    toggleCategoryForm = () => {
+        this.setState(state => {
+            state.categoryFormOpen = !state.categoryFormOpen;
+            return state;
+        });
+    };
+    loadCategories = () => {
+        axios
+            .get(
+                `http://localhost:5000/api/store/${this.context.user.store._id}/category`,
+                {
+                    headers: {
+                        "X-auth-license": this.context.user.token
+                    }
+                }
+            )
+            .then(v => {
+                console.log(v);
+                let categories = v.data.items;
+                this.setState({storeCategories: categories});
+            })
+            .catch(v => console.log(v));
+    };
+
+    watchCatName = e => {
+        e.persist();
+        this.setState({newCategoryName: e.target.value});
+    };
+    saveNewCategory = event => {
+        event.persist();
+        axios
+            .post(
+                `http://localhost:5000/api/store/${
+                    this.context.user.store._id
+                    }/category`,
+                {
+                    title: this.state.newCategoryName
+                },
+                {}
+            )
+            .then(v => {
+                console.log(v);
+                this.loadCategories();
+            })
+            .catch(v => console.log(v));
+    };
+
+    selectedCategory = (id) => {
+        return (event, v) => {
+            console.log(v)
+            this.setState(state => {
+                if (v) {
+                    state.product.categories.push(id)
+                } else {
+                    state.product.categories = state.product.categories.filter(v => {
+                        return v !== id
+                    })
+                }
+
+                console.log(state.product)
+                return state;
+            })
+        }
     }
 
-    toggleGalleryItemSelectorDialogClose =(url, index)=>{
-            this.setState(state=>{
-                state.editGalleryItemSelectorDialogOpen= false
+    watchTags = (event) => {
+        event.persist()
+        let arr = event.target.value.split(" ")
+        this.setState(state => {
+            state.product.tags = arr;
+            return state
+        })
+    }
+
+    save = event => {
+        axios
+            .post(
+                `http://localhost:5000/api/store/${
+                    this.context.user.store._id
+                    }/product`,
+                this.state.product,
+                {
+                    headers: {
+                        "X-auth-license": this.context.user.token
+                    }
+                }
+            ).then(v => {
+            console.log(v.data)
+        })
+        console.log(this.state.product);
+    };
+
+    loadProduct = async (productID) => {
+        let product = await axios.get(`http://localhost:5000/api/store/${this.context.user.store._id}/product/${productID}`)
+        if (product.data) {
+            this.setState({product: product.data, mainProductObj: product.data})
+            return true
+        }
+        return false
+
+    }
+
+    
+    componentDidMount() {
+        this.loadCategories()
+        let {match: {params}} = this.props
+        if (params.product == "new") {
+            this.setState({isNewProduct: true})
+            // Init new product
+        } else {
+            this.loadProduct(params.product).then(v => {
+                if (v) {
+                    this.setState({productID: params.product})
+                } else {
+                    // could not load product and error occured somewhere maybe in the network.
+                }
+            })
+            this.setState({productID: params.product})
+            //load product
+        }
+    }
+
+    toggleGalleryItemSelectorDialogOpen = (url, index) => {
+        return () => {
+            this.setState(state => {
+                state.currentGalleryItemEditAction.url = url
+                state.currentGalleryItemEditAction.index = index
+                state.editGalleryItemSelectorDialogOpen = true
                 return state;
+            })
+        }
+    }
+
+    toggleGalleryItemSelectorDialogClose = (url, index) => {
+        this.setState(state => {
+            state.editGalleryItemSelectorDialogOpen = false
+            return state;
+        })
+    }
+    selectMainImage = (url) => {
+        this.setState(state => {
+            state.product.mainImageLink = url
+            state.selectMainImageDrawerOpen= false
+            return state
+        })
+    }
+    /*
+    * @param index
+    * It holds the reference index to the current gallery item
+    * selected for edit in the image selection dialog.
+    */
+    openGalleryItemDrawer= (index)=>{
+        return ()=>{
+            this.setState({selectGalleryItemDrawer: true, currentSelectedGalleryItem:index })
+        }
+    }
+    selectSingleGalleryItem= (url)=>{
+        let index= this.state.currentSelectedGalleryItem
+
+            this.setState(state => {
+                state.product.gallery[index]= url
+                state.selectGalleryItemDrawer= false
+                return state
             })
     }
 
-  render() {
-    let { classes } = this.props;
+    openSelectMainImageDrawer = () => {
+        this.setState({selectMainImageDrawerOpen :true})
+    }
+    closeingMainImageDrawer= ()=>{
+        this.setState({selectMainImageDrawerOpen :false})
+    }
+    closeingGalleryImageDrawer= ()=>{
+        this.setState({selectGalleryItemDrawer :false})
+    }
 
-    let categorySelector = (
-      <React.Fragment>
-        <Dialog
-          open={this.state.categoryDialogOpen}
-          maxWidth={"xs"}
-          fullWidth
-          onClose={this.toggleCategoryDialog}
-        >
-          <DialogActions
-            style={{ display: "flex", justifyContent: "space-between" }}
-            className={classes.xPadding}
-          >
-            <Typography variant={"h6"}> Select category</Typography>
-            <Button variant={"text"} onClick={this.toggleCategoryForm}>
-              Add Category
-            </Button>
-          </DialogActions>
-          <Divider />
-          <DialogContent style={{ padding: 0 }}>
-            <div
-              style={{
-                display: this.state.categoryFormOpen ? "block" : "none"
-              }}
-            >
-              <FormControl
-                fullWidth
-                style={{ padding: "16px 24px", boxSizing: "border-box" }}
-              >
-                <FormLabel>Category title</FormLabel>
-                <Input
-                  size={"small"}
-                  onChange={this.watchCatName}
-                  value={this.state.newCategoryName}
-                />
-                <FormHelperText>Add category and edit later</FormHelperText>
-              </FormControl>
-              <div style={{ padding: "8px 24px", boxSizing: "border-box" }}>
-                <Button
-                  variant={"text"}
-                  size={"small"}
-                  onClick={this.saveNewCategory}
+    render() {
+        let {classes} = this.props;
+        let {product} = this.state
+        let categorySelector = (
+            <React.Fragment>
+                <Dialog
+                    open={this.state.categoryDialogOpen}
+                    maxWidth={"xs"}
+                    fullWidth
+                    onClose={this.toggleCategoryDialog}
                 >
-                  Save
-                </Button>{" "}
-                <Button
-                  variant={"text"}
-                  size={"small"}
-                  onClick={this.toggleCategoryForm}
-                >
-                  Cancel
-                </Button>
-              </div>
-              <Divider />
-            </div>
-            <List color={"primary"}>
-              {this.state.storeCategories.length == 0 ? (
-                <Typography style={{ padding: 24 }} align={"center"}>
-                  {" "}
-                  You have'nt created any category for your store yet
-                </Typography>
-              ) : (
-                this.state.storeCategories.map(v => (
-                  <ListItem className={classes.listItem}>
-                    <Checkbox
-                        onChange={this.selectedCategory(v._id)}
-                      checked={this.state.product.categories.some(
-                        id => id == v._id)}
-                    />{" "}
-                    <ListItemText>{v.title}</ListItemText>
-                  </ListItem>
-                ))
-              )}
+                    <DialogActions
+                        style={{display: "flex", justifyContent: "space-between"}}
+                        className={classes.xPadding}
+                    >
+                        <Typography variant={"h6"}> Select category</Typography>
+                        <Button variant={"text"} onClick={this.toggleCategoryForm}>
+                            Add Category
+                        </Button>
+                    </DialogActions>
+                    <Divider/>
+                    <DialogContent style={{padding: 0}}>
+                        <div
+                            style={{
+                                display: this.state.categoryFormOpen ? "block" : "none"
+                            }}
+                        >
+                            <FormControl
+                                fullWidth
+                                style={{padding: "16px 24px", boxSizing: "border-box"}}
+                            >
+                                <FormLabel>Category title</FormLabel>
+                                <Input
+                                    size={"small"}
+                                    onChange={this.watchCatName}
+                                    value={this.state.newCategoryName}
+                                />
+                                <FormHelperText>Add category and edit later</FormHelperText>
+                            </FormControl>
+                            <div style={{padding: "8px 24px", boxSizing: "border-box"}}>
+                                <Button
+                                    variant={"text"}
+                                    size={"small"}
+                                    onClick={this.saveNewCategory}
+                                >
+                                    Save
+                                </Button>{" "}
+                                <Button
+                                    variant={"text"}
+                                    size={"small"}
+                                    onClick={this.toggleCategoryForm}
+                                >
+                                    Cancel
+                                </Button>
+                            </div>
+                            <Divider/>
+                        </div>
+                        <List color={"primary"}>
+                            {this.state.storeCategories.length == 0 ? (
+                                <Typography style={{padding: 24}} align={"center"}>
+                                    {" "}
+                                    You have'nt created any category for your store yet
+                                </Typography>
+                            ) : (
+                                this.state.storeCategories.map(v => (
+                                    <ListItem className={classes.listItem}>
+                                        <Checkbox
+                                            onChange={this.selectedCategory(v._id)}
+                                            checked={this.state.product.categories.some(
+                                                id => id == v._id)}
+                                        />{" "}
+                                        <ListItemText>{v.title}</ListItemText>
+                                    </ListItem>
+                                ))
+                            )}
 
-            </List>
-          </DialogContent>
-          <DialogActions className={classes.xPadding} s>
-            <Button onClick={this.toggleCategoryDialog}> Cancel</Button>
-          </DialogActions>
-        </Dialog>
-      </React.Fragment>
-    );
-    let galleryItemSelector= (
-        <React.Fragment>
-            <Dialog
-                open={this.state.editGalleryItemSelectorDialogOpen}
-                fullScreen
-                fullWidth
-                style={{zIndex:30000}}
-                onClose={this.toggleGalleryItemSelectorDialogClose}
-            >
-                <DialogActions
-                    style={{ display: "flex", justifyContent: "space-between" }}
-                    className={classes.xPadding}
-                >
-                    <Typography variant={"h6"}> Select Image</Typography>
-                    <Button variant={"text"} onClick={this.toggleGalleryItemSelectorDialog}>
-                        Upload
-                    </Button>
-                </DialogActions>
-                <Divider />
-                <DialogContent style={{ padding: 0 }}>
-                    <Uploader noPreview onUploadEnd={this.newFileUploadEnd} onUploadEnd={this.newFileUploadEnd} />
-                    <Grid container>
+                        </List>
+                    </DialogContent>
+                    <DialogActions className={classes.xPadding} s>
+                        <Button onClick={this.toggleCategoryDialog}> Cancel</Button>
+                    </DialogActions>
+                </Dialog>
+            </React.Fragment>
+        );
+        let primaryComponent = (
+            <React.Fragment>
+                {this.state.selectMainImageDrawerOpen ?
+                    <ImageSelectionComponent
+                        open={this.state.selectMainImageDrawerOpen}
+                        selectSingle={this.selectMainImage}
+                        closeingDrawer={this.closeingMainImageDrawer}/> : ""}
+                {this.state.categoryDialogOpen ? categorySelector : null}
+
+                <Grid container spacing={24}>
+                    <Grid item sm={7} xs={12}>
+                            <Paper  style={{padding: 24}} elevation={1}>
+                                <FormControl fullWidth className={classes.rootFormControls}>
+                                    <FormLabel> Produc title</FormLabel>
+                                    <Input
+                                        value={product.title}
+                                        onChange={this.watchInput("title")}
+                                    />
+                                </FormControl>
+                                <FormControl fullWidth className={classes.rootFormControls}>
+                                    <FormLabel>Product caption</FormLabel>
+                                    <Input
+                                        value={product.caption}
+                                        onChange={this.watchInput("caption")}
+                                    />
+                                </FormControl>
+                            </Paper>
+                            <Paper style={{display: "flex", justifyContent: "space-between", padding: 24}}
+                                   elevation={1} className={classes.ymargin}>
+                                <FormControl fullWidth className={classes.rootFormControls}
+                                             style={{paddingRight: "16px"}}>
+                                    <FormLabel>Product cost Price</FormLabel>
+                                    <Input onChange={this.watchInput("costPrice")}
+                                           value={product.costPrice}/>
+                                </FormControl>
+                                <FormControl fullWidth className={classes.rootFormControls}
+                                             style={{paddingLeft: "16px"}}>
+                                    <FormLabel>Product selling price</FormLabel>
+                                    <Input onChange={this.watchInput("sellingPrice")}
+                                           value={product.sellingPrice}/>
+                                </FormControl>
+                            </Paper>
+                            <Paper style={{display: "flex", justifyContent: "flex-start", padding: 24}}
+                                   elevation={1} className={classes.ymargin}>
+                                <FormControl className={classes.rootFormControls} style={{paddingRight: 16}}>
+                                    <FormLabel>Product Quantity</FormLabel>
+                                    <Input onChange={this.watchInput("count")}
+                                           value={product.count}/>
+                                </FormControl>
+                                <FormControl className={classes.rootFormControls} style={{paddingLeft: 16}}>
+                                    <FormLabel>Available</FormLabel>
+                                    <Switch checked={this.state.product.available} onChange={(e, checked) => {
+                                        this.setState(state => {
+                                            state.product.available = checked
+                                            return state
+                                        })
+                                    }}/>
+                                </FormControl>
+                            </Paper>
+                            <Paper style={{height: 300, padding: 24}}
+                                   elevation={1}
+                                   className={classes.ymargin}>
+                                <CKEditor
+                                    editor={ClassicEditor}
+                                    onChange={(editor, dataw, data) => {
+                                        console.log(data)
+                                        // this.setState({
+                                        // product: {description:data}
+                                        // })
+                                    }}
+                                    style={{height: "100%"}}
+                                />
+                            </Paper>
+                    </Grid>
+                    <Grid
+                        item
+                        sm={5} xs={12}
+                    >
+                        <Paper style={{padding: 24}}>
+                            <Typography variant={"caption"}>Main Product Image</Typography>
+                            <div style={{
+                                width: 200, height: 200, background: "white", margin: "8px 0",
+                                backgroundImage: 'url(file:///C:/Users/LUBI/Pictures/Screenshots/Screenshot%20(3).png)'
+                            }}>
+                            </div>
+                            <div style={{}}>
+                                <IconButton><UploadIcon/></IconButton>
+                                <IconButton onClick={this.openSelectMainImageDrawer}><SelectIcon/></IconButton>
+                                <IconButton><LinkIcon/></IconButton>
+                            </div>
+                        </Paper>
+                        <Divider/>
+                        <Typography className={classes.ymargin}> Core Options</Typography>
+                        <Paper style={{padding: 24, background: "white"}} className={classes.ymargin}>>
+                            <Typography variant={"caption"}>Category</Typography>
+                            <Typography>
+                                {this.state.product.category
+                                    ? this.state.product.category
+                                    : "Select Category"}
+                            </Typography>
+                        </Paper>
+                        <Paper className={classes.ymargin} style={{padding: 24}}>
+                            <Button
+                                fullWidth
+                                variant={"contained"}
+                                onClick={this.toggleCategoryDialog}
+                            >
+                                {" "}
+                                Select category
+                            </Button>
+                        </Paper>
+                        <Paper  style={{padding: 24}} className={classes.ymargin}>
+                            <div className={classes.ymargin}>
+                                {this.state.product.tags.map(v => (<Chip label={v} style={{margin: "8"}}/>))}
+                            </div>
+                            <FormControl fullWidth>
+                                <InputBase
+                                    multiline
+                                    style={{background: "white", padding: "16px"}}
+                                    onChange={this.watchTags}
+                                />
+                                <FormHelperText>
+                                    Enter product tags and seperate with spaces
+                                </FormHelperText>
+                            </FormControl>
+                        </Paper>
 
                     </Grid>
-                </DialogContent>
-                <DialogActions className={classes.xPadding} s>
-                    <Button onClick={this.toggleGalleryItemSelectorDialogClose}> Cancel</Button>
-                </DialogActions>
-            </Dialog>
-        </React.Fragment>
-    )
-    let imageUploadComp= (
-        <React.Fragment>
-            <div style={{width:200, overflow:"hidden", padding:"24px 24px", border:"1px solid black", position:"relative"}}>
-                <ButtonBase style={{width:"100%", padding:"16px", position: "absolute", top:0, left:0, height:"100%"}}
-                onClick={()=>{
-                    document.getElementById("file").click()
-                }}>Upload Image</ButtonBase>
-                <input type={"file"} id={"file"} onChange={this.watchFileChange}/>
-            </div>
-        </React.Fragment>
-    )
+                </Grid>
+            </React.Fragment>
+        );
 
-    let primaryComponent = (
-      <React.Fragment>
-        {categorySelector}
-        <Grid container>
-          <Grid item sm={7} xs={12}>
-            <div className={classes.primarySpacing}>
-              <FormControl fullWidth className={classes.rootFormControls}>
-                <FormLabel> Produc title</FormLabel>
-                <Input
-                  id="productTitle"
-                  name="product-title"
-                  onChange={this.watchInput("title")}
-                />
-              </FormControl>
-              <FormControl fullWidth className={classes.rootFormControls}>
-                <FormLabel>Product Description</FormLabel>
-                <Input
-                  id="productDescription"
-                  name="product-description"
-                  onChange={this.watchInput("description")}
-                />
-              </FormControl>
-              <FormControl fullWidth className={classes.rootFormControls}>
-                <FormLabel>Product cost Price</FormLabel>
-                <Input onChange={this.watchInput("costPrice")} />
-              </FormControl>
-              <FormControl fullWidth className={classes.rootFormControls}>
-                <FormLabel>Product selling price</FormLabel>
-                <Input onChange={this.watchInput("sellingPrice")} />
-              </FormControl>
-              <div />
-            </div>
-          </Grid>
-
-          <Grid
-            item
-            sm={5}
-            xs={12}
-            style={{
-              height: "500%",
-              background: "pink",
-              padding: "32px 32px"
-            }}
-          >
-            <div
-              className={classes.ymargin}
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                background: "orange",
-                padding: "20px",
-                flexDirection: "column",
-                alignItems: "center"
-              }}
-            >
-              <div
-                style={{
-                  width: 150,
-                  height: 150,
-                  background: "#404040",
-                  border: "5px solid grey"
-                }}
-              />
-
-                {imageUploadComp}
-
-            </div>
-            <Typography> Core Options</Typography>
-            <div style={{ padding: 16, background: "white" }}>
-              <Typography variant={"caption"}>Category</Typography>
-              <Typography>
-                {this.state.product.category
-                  ? this.state.product.category
-                  : "Select Category"}
-              </Typography>
-            </div>
-            <div className={classes.ymargin}>
-              <Button
-                fullWidth
-                variant={"contained"}
-                onClick={this.toggleCategoryDialog}
-              >
-                {" "}
-                Select category
-              </Button>
-            </div>
-            <div>
-                <div className={classes.ymargin}>
-                    {this.state.product.tags.map(v=> (<Chip label={v} style={{margin:"8"}}/>))}
-                </div>
-              <FormControl fullWidth>
-                <InputBase
-                  multiline
-                  style={{ background: "white", padding: "16px" }}
-                  onChange={this.watchTags}
-                />
-                <FormHelperText>
-                  Enter product tags and seperate with spaces
-                </FormHelperText>
-              </FormControl>
-            </div>
-          </Grid>
-        </Grid>
-      </React.Fragment>
-    );
-
-
-    let visualComponent= (
-        <React.Fragment>
-            {galleryItemSelector}
-            <Grid container className={classes.primarySpacing}>
-                <Grid item xs={12}>
-                    <Typography variant={"h6"}>Gallery</Typography>
-                    <Grid container spacing={8}>
-                        {this.state.product.gallery.map((url,index)=>(
-                            <Grid item onClick={this.toggleGalleryItemSelectorDialogOpen(index, url)}>
-                                <div style={{width:"200px", height:"200px", background:"red"}}></div>
-                            </Grid>
-                        ))}
+        let visualComponent = (
+            <React.Fragment>
+                {this.state.selectGalleryItemDrawer ?
+                    <ImageSelectionComponent
+                        open={this.state.selectGalleryItemDrawer}
+                        selectSingle={this.selectSingleGalleryItem}
+                        closeingDrawer={this.closeingGalleryImageDrawer}/> : null}
+                <Grid container className={classes.primarySpacing} spacing={12}>
+                    <Grid item xs={12}>
+                        <Typography variant={"h6"}>Gallery</Typography>
+                        <Grid container spacing={8}>
+                            {this.state.product.gallery.map((url, index) => (
+                                <Grid item >
+                                    <ButtonBase onClick={this.openGalleryItemDrawer(index)} style={{width: "200px", height: "200px", background: "red"}}></ButtonBase>
+                                </Grid>
+                            ))}
+                        </Grid>
+                    </Grid>
+                    <Grid item>
+                        <Typography variant={"h6"}>Video </Typography>
+                    </Grid>
+                </Grid>
+            </React.Fragment>
+        )
+        return (
+            <React.Fragment>
+                <PageAppBar nospacing>
+                    <Tabs
+                        style={{padding: 0}}
+                        variant={"scrollable"}
+                        value={this.state.currentTab}
+                        onChange={this.tabChange}
+                    >
+                        <Tab label={"Primary"} style={{color: '#404040'}}/>
+                        <Tab
+                            label={"Visuals"}
+                            style={{color: '#404040'}}
+                        />
+                        <Tab label={"Advanced"} style={{color: '#404040'}}/>
+                    </Tabs>
+                    <div>
+                        <Button
+                            onClick={this.state.isNewProduct ? this.save : this.updateProduct}>{this.state.isNewProduct ? "Save" : "Update"}</Button>
+                    </div>
+                </PageAppBar>
+                <Grid container style={{padding: "24px 24px"}} justify={"center"}>
+                    <Grid item xs={10}>
+                    {this.state.currentTab == 0 && primaryComponent}
+                    {this.state.currentTab == 1 && visualComponent}
                     </Grid>
                 </Grid>
 
-
-            </Grid>
-        </React.Fragment>
-    )
-    return (
-      <React.Fragment>
-        <PageAppBar nospacing>
-          <Tabs
-            style={{ padding: 0 }}
-            variant={"scrollable"}
-            value={this.state.currentTab}
-            onChange={this.tabChange}
-          >
-            <Tab label={"Primary"} style={{ background: "red" }} />
-              <Tab
-                  label={"Visuals"}
-                  style={{ background: "red" }}
-              />
-            <Tab label={"Advanced"} style={{ background: "red" }} />
-          </Tabs>
-          <div>
-            <Button onClick={this.save}>Save</Button>
-          </div>
-        </PageAppBar>
-        {this.state.currentTab == 0 && primaryComponent}
-          {this.state.currentTab == 1 && visualComponent}
-      </React.Fragment>
-    );
-  }
+            </React.Fragment>
+        );
+    }
 }
 
 export default withStyles(styles)(Product);

@@ -1,34 +1,21 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import AppMenu from "./components/Menu";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
 import Toolbar from "@material-ui/core/Toolbar";
-import {
-  AppBar,
-  Dialog,
-  DialogContent,
-  FormControl,
-  IconButton,
-  Input,
-  Paper
-} from "@material-ui/core";
+import {AppBar, IconButton, MenuItem, Menu} from "@material-ui/core";
 import CategoryIndexPage from "./activities/Category/Index";
 import ProductIndexPage from "./activities/Product/Index";
-import AssetsIndexPage from "./activities/Asset/Index";
+import CustomersIndexPage from "./activities/Customer/Index";
 import StoreIndexPage from "./activities/Index/Index";
 import ServiceIndexPage from "./activities/Service/Index";
 import OrderIndexPage from "./activities/Order/Index";
+import More from "@material-ui/icons/MoreVert"
 import BlogIndexPage from "./activities/Blog/Index";
 import withStyles from "@material-ui/core/styles/withStyles";
-import { BrowserRouter, Link, Switch, Route } from "react-router-dom";
-import InputLabel from "@material-ui/core/InputLabel";
+import {BrowserRouter, Route, Switch} from "react-router-dom";
 import NotificationIcon from "@material-ui/icons/Notifications";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import Button from "@material-ui/core/es/Button";
 import AppContext from "./AppContext";
 import Drawer from "@material-ui/core/Drawer";
-import axios from "axios";
-import { Menu } from "@material-ui/icons";
+import {Menu as MenuIcon} from "@material-ui/icons";
 import SignupLogin from "./SignupSignin"
 
 let drawerWidth = 220;
@@ -60,11 +47,9 @@ let styles = theme => ({
 class App extends Component {
   constructor(props) {
     super(props);
-    ProductIndexPage.contextType = App.contextType;
-    ServiceIndexPage.contextType = App.contextType;
-    CategoryIndexPage.contextType= App.contextType
   }
   state = {
+    anchoEl: null,
     appBar: {
       height: undefined
     },
@@ -76,11 +61,28 @@ class App extends Component {
       store: undefined
     }
   };
-
   static contextType = AppContext;
 
+  logOutUser= ()=>{
+    window.localStorage.setItem(
+        "user",
+        JSON.stringify({
+          userName: undefined,
+          userToken:undefined,
+          store: undefined
+        })
+    );
+    this.setState(state=>{
+      state.user= {
+        userName: undefined,
+        token: undefined,
+        loggedIn: false,
+        store:false
+      }
+      return state
+    });
+  }
   loggedInUser = (userName, token, store) => {
-
     window.localStorage.setItem(
       "user",
       JSON.stringify({
@@ -89,6 +91,7 @@ class App extends Component {
         store: store
       })
     );
+
     this.setState(state=>{
       state.user= {
         userName: userName,
@@ -136,31 +139,70 @@ class App extends Component {
     });
   }
 
+  handleMenuDropDown= (e)=>{
+    e.persist()
+    this.setState({ anchorEl: e.currentTarget });
+  }
+  handleCloseDropDown = event => {
+    this.setState({ anchorEl: null });
+  };
+
+  handleLogout= e=>{
+    this.logOutUser()
+    this.handleCloseDropDown()
+  }
+  handleProfile= e=>{
+    this.handleCloseDropDown()
+  }
   render() {
     let { classes } = this.props;
+
+    let {anchorEl} = this.state
+
+    let menuItems=(
+        <Menu
+        id="simple-menu"
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={this.handleCloseDropDown}
+        style={{zIndex:50000}}
+        >
+      <MenuItem onClick={this.handleProfile}>Profile</MenuItem>
+      <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
+    </Menu>
+  )
     let mainApp = (
       <React.Fragment>
         <AppBar
+            elevation={0}
+            color={"primary"}
             position={"fixed"}
             style={{
-              background: "white",
               zIndex: 4000,
+              width: this.state.drawerOpen ? `calc(100% - ${drawerWidth}px)` : "100%",
+              marginLeft:this.state.drawerOpen ? drawerWidth : 0,
               display: "flex",
               justifyContent: "space-between"
             }}
         >
           <Toolbar
-              style={{ justifyContent: "space-between" }}
+              style={{ justifyContent: "space-between" , color:"white"}}
           >
-            <IconButton onClick={this.toggleDrawer}>
-              <Menu />
+
+            <IconButton onClick={this.toggleDrawer} color={"inherit"}>
+              <MenuIcon />
             </IconButton>
-            <IconButton>
-              <NotificationIcon />
+            <div>
+            <IconButton onClick={this.handleMenuDropDown}>
+              <More aria-owns={anchorEl ? 'simple-menu' : undefined}
+                    aria-haspopup="true"
+                    onClick={this.handleClick}/>
             </IconButton>
+              {menuItems}
+            </div>
           </Toolbar>
         </AppBar>
-        <div style={{ display: "flex", width: "100%" }}>
+        <div style={{ display: "flex", width: "100%" , flexWrap:"nowrap"}}>
           <div
             className={
               this.state.drawerOpen ? classes.drawer : classes.drawerOut
@@ -186,7 +228,7 @@ class App extends Component {
               <Route path={"/"} exact component={StoreIndexPage} />
               <Route path={"/categories"} component={CategoryIndexPage} />
               <Route path={"/products"} component={ProductIndexPage} />
-              <Route path={"/assets/"} component={AssetsIndexPage} />
+              <Route path={"/customers/"} component={CustomersIndexPage} />
               <Route path={"/services/"} component={ServiceIndexPage} />
               <Route path={"/blog/"} component={BlogIndexPage} />
               <Route path={"/orders/"} component={OrderIndexPage} />
@@ -198,16 +240,19 @@ class App extends Component {
     return (
       <BrowserRouter>
         <React.Fragment>
-          <AppContext.Provider value={{user:this.state.user}}>
-            {this.state.user.loggedIn ? (
-              mainApp
-            ) : (
-                <SignupLogin loggedInUser={this.loggedInUser}/>
-            )}
-          </AppContext.Provider>
+            <AppContext.Provider value={{user:this.state.user}}>
+              {this.state.user.loggedIn ? (
+                mainApp
+              ) : (
+                  <SignupLogin loggedInUser={this.loggedInUser}/>
+              )}
+            </AppContext.Provider>
         </React.Fragment>
       </BrowserRouter>
     );
   }
 }
+
 export default withStyles(styles)(App);
+
+

@@ -1,8 +1,8 @@
 {
-  "name": "flat-lubi-ep-theme",
+  "name": "l-magnet-app",
   "version": "0.1.0",
-  "homepage": "/bucketname/tempname",
   "private": true,
+  "homepage": "/client",
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^12.0.0",
     "@ckeditor/ckeditor5-react": "^1.1.1",

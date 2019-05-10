@@ -1,39 +1,36 @@
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Grid from "@material-ui/core/Grid";
-import Chip from "@material-ui/core/Chip";
 import Typography from "@material-ui/core/Typography";
-import ExpansionPanel from "@material-ui/core/ExpansionPanel";
-import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
-import ExpansionPanelActions from "@material-ui/core/ExpansionPanelActions";
-import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
-import DropDownIcon from "@material-ui/icons/ArrowDropDown";
 import Button from "@material-ui/core/Button";
-import { Link } from "react-router-dom";
 import {
-  Tabs,
   ButtonBase,
-  Toolbar,
-  Tab,
-  FormHelperText,
   Dialog,
-  DialogTitle,
-  DialogContent,
   DialogActions,
-  ListItemAvatar,
-  ListItemText,
-  List,
+  DialogContent,
+  FormLabel,
+  FormHelperText,
+  OutlinedInput as Input,
   InputBase,
-  Input
+  List,
+  ListItemText,
+  Tab, Divider,
+  Tabs, IconButton
 } from "@material-ui/core";
 import PageAppBar from "../../components/ActivityPrimaryAppBar";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import ListItem from "@material-ui/core/ListItem";
+import CKEditor from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import ImageSelectionComponent from "../../components/ImageSelectionComponent"
+import {CloudUpload as UploadIcon, Link as LinkIcon, SelectAll as SelectIcon} from "@material-ui/icons";
+import axios from "axios";
+import AppContext from "../../AppContext";
 
 let styles = {
   listItem: {
-    background: "orange"
+
   },
   xPadding: {
     padding: "0px 16px"
@@ -63,157 +60,187 @@ let styles = {
     justifyItems: "space-between"
   }
 };
+
 class Category extends React.Component {
+  static contextType = AppContext;
   state = {
     currentTab: 0,
     categoryDialogOpen: false,
-    product: {
-      category: undefined,
-      gallery: [
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined
-      ],
-      tags: [],
-      title: undefined,
+    category: {
+       title: undefined,
+      caption: undefined,
       description: undefined,
-      priceUpperBound: undefined,
-      priceLowerBound: undefined,
-      mainImage: undefined
-    }
+      products: [],
+      tags: []
+    },
+    selectMainImageDrawerOpen: false
   };
-
-  setUpenv = () => {};
   toggleCategoryDialog = () => {
     this.setState(state => {
       state.categoryDialogOpen = !state.categoryDialogOpen;
       return state;
     });
   };
-  addNewProduct = () => {};
-  updateProduct = () => {};
-  getProductDetail = () => {};
+
   tabChange = (e, v) => {
     this.setState({ currentTab: v });
   };
-
   watchInput = propName => {
     return event => {
       event.persist();
       this.setState(state => {
-        state.product[propName] = event.target.value;
+        state.category[propName] = event.target.value;
         return state;
       });
     };
   };
+
+  update = () => {
+    let {match: {params}} = this.props
+    axios
+        .put(
+            `http://localhost:5000/api/store/${this.context.user.store._id}/category/${params.category}`,
+            this.state.category,
+            {
+              headers: {
+                "X-auth-license": this.context.user.token
+              }
+            }
+        ).then(v => {
+      console.log(v)
+      this.setState({updated: true})
+      setTimeout(() => {
+        this.setState({updated: false})
+      }, 2000)
+      this.loadCategory(params.category)
+    }).catch(v => console.log(v))
+
+  };
+
+
+  closeingMainImageDrawer= ()=>{
+    this.setState({selectMainImageDrawerOpen: false})
+  }
+  selectMainImage = url=>{
+    this.setState({category: {mainImageLink: url}})
+  }
+
+  openSelectMainImageDrawer=()=>{
+    this.setState({selectMainImageDrawerOpen: true})
+  }
+
+  loadCategory = async (catID) => {
+    let category;
+      category = await axios.get(`http://localhost:5000/api/store/${this.context.user.store._id}/category/${catID}`)
+
+    if(!category){
+      console.log("error")
+      return
+    }
+    if (category.data) {
+      this.setState({category: category.data, mainCategoryObj:category.data})
+      return true
+    }
+    return false
+  }
+
+  componentDidMount() {
+    let {match: {params}} = this.props
+    if (params.category == "new") {
+      this.setState({isNewCategory: true})
+      // Init new product
+    } else {
+      this.setState({isNewCategory: false})
+      this.loadCategory(params.category).then(v => {
+        if (v) {
+          this.setState({categoryID: params.category})
+        } else {
+        }
+      })
+      this.setState({categoryID: params.category})
+      //load product
+    }
+  }
+  save =async  ()=>{
+    let category = await axios.post(`http://localhost:5000/api/store/${this.context.user.store._id}/category`,
+        this.state.category,
+        {
+          headers: {
+            "X-auth-license": this.context.user.token
+          }
+        })}
+
   render() {
     let { classes } = this.props;
 
-    let categorySelector = (
-      <React.Fragment>
-        <Dialog
-          open={this.state.categoryDialogOpen}
-          maxWidth={"sm"}
-          fullWidth
-          onClose={this.toggleCategoryDialog}
-        >
-          <DialogActions
-            style={{ display: "flex", justifyContent: "space-between" }}
-            className={classes.xPadding}
-          >
-            <Typography variant={"h6"}> Select category</Typography>
-            <Button variant={"text"}>Add Category</Button>
-          </DialogActions>
-          <DialogContent>
-            <List color={"primary"}>
-              <ListItem className={classes.listItem} component={ButtonBase}>
-                <ListItemText>Category text</ListItemText>
-              </ListItem>
-              <ListItem className={classes.listItem} component={ButtonBase}>
-                <ListItemText>Category text</ListItemText>
-              </ListItem>
-              <ListItem className={classes.listItem} component={ButtonBase}>
-                <ListItemText>Category text</ListItemText>
-              </ListItem>
-            </List>
-          </DialogContent>
-          <DialogActions className={classes.xPadding} s>
-            <Button onClick={this.toggleCategoryDialog}> Cancel</Button>
-          </DialogActions>
-        </Dialog>
-      </React.Fragment>
-    );
 
     let primaryComponent = (
       <React.Fragment>
-        {categorySelector}
+        {this.state.selectMainImageDrawerOpen ?
+            <ImageSelectionComponent
+                open={this.state.selectMainImageDrawerOpen}
+                selectSingle={this.selectMainImage}
+                closeingDrawer={this.closeingMainImageDrawer}/> : ""}
         <Grid container>
           <Grid item sm={7} xs={12}>
             <div className={classes.primaryFormArea}>
               <FormControl fullWidth className={classes.rootFormControls}>
-                <InputLabel>Category title</InputLabel>
+                <FormLabel>Category title</FormLabel>
                 <Input
-                  onChange={this.watchInput("title")}
+                    value={this.state.category.title}
+                    onChange={this.watchInput("title")}
                 />
+                <FormHelperText></FormHelperText>
               </FormControl>
               <FormControl fullWidth className={classes.rootFormControls}>
-                <InputLabel>Category Caption</InputLabel>
+                <FormLabel>Category Caption</FormLabel>
                 <Input
-                  onChange={this.watchInput("description")}
+                    value={this.state.category.caption}
+                    onChange={this.watchInput("caption")}
                 />
+                <FormHelperText></FormHelperText>
               </FormControl>
+              <Typography variant={"subtitle1"}> Category Description</Typography>
+              <CKEditor
+                  editor={ClassicEditor}
+                  onChange={(editor, dataw, data) => {
+                    console.log(data)
+                    // this.setState({
+                    // product: {description:data}
+                    // })
+                  }}
+                  style={{ width:"100%",height:"100%"}}
+              />
               <div />
             </div>
           </Grid>
-
-          <Grid
-            item
-            sm={5}
-            xs={12}
-            style={{
-              height: "500%",
-              background: "ghostwhite",
-              padding: "32px 32px"
-            }}
+          <Grid item sm={5} xs={12}
+                style={{height: "500%", background: "ghostwhite"}}
           >
-            <div
-              className={classes.ymargin}
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                background: "orange",
-                padding: "20px",
-                flexDirection: "column",
-                alignItems: "center"
-              }}
-            >
-              <div
-                style={{
-                  width: 150,
-                  height: 150,
-                  background: "#404040",
-                  border: "5px solid grey"
-                }}
-              />
-              <Button className={classes.ymargin}>Upload Image</Button>
-            </div>
-            <Typography> Core Options</Typography>
-            <div className={classes.ymargin}>
-            </div>
-            <div className={classes}>
-              <FormControl fullWidth>
-                <InputBase
-                  multiline
-                  style={{ background: "white", padding: "16px" }}
-                />
-                <FormHelperText>
-                  Enter product tags and seperate with spaces
-                </FormHelperText>
-              </FormControl>
-            </div>
+            <Grid container>
+              <Grid item xs={12} style={{display:"flex", alignItems:"center", justifyContent:"center", flexDirection:"column", padding:"32px 0px"}}>
+                <div style={{width:200, height:200, background: "grey"}}>
+                </div>
+                <div style={{padding:"0px 0px"}}>
+                  <IconButton><UploadIcon/></IconButton>
+                  <IconButton onClick={this.openSelectMainImageDrawer}><SelectIcon/></IconButton>
+                  <IconButton><LinkIcon/></IconButton>
+                </div>
+              </Grid>
+              <Grid item xs={12}><Divider/></Grid>
+              <Grid item style={{padding:24}}  xs={12}>
+                <Typography> Core Options</Typography>
+                <FormControl fullWidth>
+                  <InputBase
+                      multiline
+                      style={{ background: "white", padding: "16px" }}
+                  />
+                  <FormHelperText>
+                    Enter product tags and seperate with spaces
+                  </FormHelperText>
+                </FormControl>
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
       </React.Fragment>
@@ -227,14 +254,18 @@ class Category extends React.Component {
               value={this.state.currentTab}
               onChange={this.tabChange}
             >
-              <Tab label={"Primary"} style={{ background: "red" }} />
-              <Tab label={"products"} style={{ background: "red" }} />
+              <Tab label={"Primary"} style={{ color: "black" }} />
+              <Tab label={"products"} style={{  color: "black" }} />
             </Tabs>
             <div>
-              <Button>Save</Button>
+              <Button onClick={this.state.isNewCategory? this.save : this.update}> {this.state.isNewCategory? "Save" : "Update"}</Button>
             </div>
         </PageAppBar>
+        <Grid container style={{padding: "24px 0"}} justify={"center"}>
+          <Grid item xs={10}>
         {this.state.currentTab == 0 && primaryComponent}
+          </Grid>
+        </Grid>
       </React.Fragment>
     );
   }

@@ -28,14 +28,11 @@ export default class Uploader extends React.Component {
         })
         this.setState({file: event.target.files[0], sent: true});
     };
-
     render() {
-
         let preview= (
             <div style={{width:"224px", height:240, background:"ghostwhite"}}>
             </div>
         )
-
         let compo = (
             <React.Fragment>
                 <div style={{ display:"flex", flexDirection: "column", justifyContent:"center", alignItems:"center"}}>

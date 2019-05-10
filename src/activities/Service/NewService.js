@@ -12,25 +12,9 @@ import CKEditor from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 import {
-  FormControlLabel,
   Button,
-  Toolbar,
-  ExpansionPanelActions,
-  ExpansionPanelDetails,
-  ExpansionPanelSummary,
-  ExpansionPanel,
-  AppBar,
-  MenuItem,
-  Divider,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  FormHelperText
+
 } from "@material-ui/core";
-import Select from "@material-ui/core/Select";
-import Dialog from "@material-ui/core/Dialog";
-import { Link } from "react-router-dom";
-import Paper from "@material-ui/core/Paper";
 import PageAppBar from "../../components/ActivityPrimaryAppBar";
 
 let styles = {
