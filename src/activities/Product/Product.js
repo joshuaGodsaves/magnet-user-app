@@ -6,11 +6,9 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import {CloudUpload as UploadIcon, Link as LinkIcon, SelectAll as SelectIcon} from "@material-ui/icons";
 import {
-    SnackbarContent,
-    Snackbar, ButtonBase,
-    FormGroup,
+    ButtonBase,
     Checkbox,
-    Dialog,Paper,
+    Dialog,
     DialogActions,
     DialogContent,
     Divider,
@@ -23,15 +21,15 @@ import {
     ListItem,
     ListItemText,
     OutlinedInput as Input,
+    Paper,
+    Switch,
     Tab,
-    Tabs,
-    Switch
+    Tabs
 } from "@material-ui/core";
 import ImageSelectionComponent from "../../components/ImageSelectionComponent"
 import PageAppBar from "../../components/ActivityPrimaryAppBar";
 import AppContext from "../../AppContext";
 import axios from "axios";
-import Uploader from "../../components/DynamicUploadHandler";
 import CKEditor from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
@@ -428,7 +426,7 @@ class Product extends React.Component {
                 {this.state.categoryDialogOpen ? categorySelector : null}
 
                 <Grid container spacing={24}>
-                    <Grid item sm={7} xs={12}>
+                    <Grid item sm={12} xs={12} md={6}>
                             <Paper  style={{padding: 24}} elevation={1}>
                                 <FormControl fullWidth className={classes.rootFormControls}>
                                     <FormLabel> Produc title</FormLabel>
@@ -494,7 +492,7 @@ class Product extends React.Component {
                     </Grid>
                     <Grid
                         item
-                        sm={5} xs={12}
+                        sm={12} xs={12} md={6}
                     >
                         <Paper style={{padding: 24}}>
                             <Typography variant={"caption"}>Main Product Image</Typography>
@@ -596,7 +594,7 @@ class Product extends React.Component {
                     </div>
                 </PageAppBar>
                 <Grid container style={{padding: "24px 24px"}} justify={"center"}>
-                    <Grid item xs={10}>
+                    <Grid item sm={10} xs={12}>
                     {this.state.currentTab == 0 && primaryComponent}
                     {this.state.currentTab == 1 && visualComponent}
                     </Grid>

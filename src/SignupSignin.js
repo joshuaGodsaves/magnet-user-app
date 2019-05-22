@@ -1,31 +1,25 @@
-import React, { Component } from "react";
-import AppMenu from "./components/Menu";
+import React, {Component} from "react";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import Toolbar from "@material-ui/core/Toolbar";
+import {ChevronRightSharp, Store as StoreIcon} from "@material-ui/icons"
 import {
-    List, ListItem,ListItemIcon,
-    FormControl, FormLabel, FormHelperText, OutlinedInput,
+    Divider,
+    FormControl,
+    FormHelperText,
+    FormLabel,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListSubheader,
+    OutlinedInput,
     Paper
 } from "@material-ui/core";
-import CategoryIndexPage from "./activities/Category/Index";
-import ProductIndexPage from "./activities/Product/Index";
-import AssetsIndexPage from "./activities/Asset/Index";
-import StoreIndexPage from "./activities/Index/Index";
-import ServiceIndexPage from "./activities/Service/Index";
-import OrderIndexPage from "./activities/Order/Index";
-import BlogIndexPage from "./activities/Blog/Index";
+
 import withStyles from "@material-ui/core/styles/withStyles";
-import { BrowserRouter, Link, Switch, Route } from "react-router-dom";
-import InputLabel from "@material-ui/core/InputLabel";
-import NotificationIcon from "@material-ui/icons/Notifications";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "@material-ui/core/es/Button";
 import AppContext from "./AppContext";
-import Drawer from "@material-ui/core/Drawer";
 import axios from "axios";
-import { Menu } from "@material-ui/icons";
-import { ButtonBase } from '@material-ui/core/ButtonBase';
+import {ButtonBase} from '@material-ui/core/ButtonBase';
 
 let styles = theme => ({
     contentContainer: {
@@ -34,6 +28,10 @@ let styles = theme => ({
         position: "absolute",
         top: 0,
         left: 0
+    },
+    listItemRoot: {
+        display: "flex",
+        justifyContent: "space-between"
     }
 });
 
@@ -147,12 +145,14 @@ class Page extends Component {
 
     }
 
+
     selectedStore= (index)=>{
         return (event)=>{
-        let storeID= this.state.stores[index]
+            let store = this.state.stores[index]
         let {userName, token} = this.state
         console.log(this.state)
-        this.props.loggedInUser(userName, token, storeID )
+
+            this.props.loggedInUser(userName, token, store)
         // console.log("loading app")
         //let token= await axios.get(`http://localhost:5000/api/user/${this.state.userName}`)
         }
@@ -168,17 +168,20 @@ class Page extends Component {
 
         let {stores} = this.state
 
-
         let generatedStoreList= (
             <React.Fragment>
                 <Grid container justify={"center"}>
                     <Grid item xs={10} sm={6} md={5} lg={3} style={{margin:"48px"}}>
-                        <Paper style={{padding:24, background:"ghostwhite"}}>
+                        <Paper style={{background: "ghostwhite"}}>
                             <List>
+                                <ListSubheader>Stores </ListSubheader>
+                                <Divider/>
                             {this.state.stores.length !== 0 ? stores.map((store, index)=>{
                                 return (
-                                <ListItem component={ButtonBase} onClick= {this.selectedStore(index)}>
-                                    <ListItemIcon></ListItemIcon> <Typography>{store._id}</Typography>
+                                    <ListItem component={ButtonBase} onClick={this.selectedStore(index)}
+                                              className={classes.listItemRoot}>
+                                        <ListItemIcon><StoreIcon/></ListItemIcon> <Typography>{store._id}</Typography>
+                                        <ListItemIcon><ChevronRightSharp/></ListItemIcon>
                                 </ListItem>
                                 )
                             }) : <NewStore/>}
@@ -188,6 +191,7 @@ class Page extends Component {
                 </Grid>
             </React.Fragment>
         )
+
         let selectActiveStoreComponent=(
             <React.Fragment>
                {this.state.stores.length === 0 ? <NewStore user={this.state.userName} onFinish={this.selectedStoreFromCreate}/> : generatedStoreList }
@@ -220,6 +224,7 @@ class Page extends Component {
                 </Grid>
             </React.Fragment>
         )
+
         let signIn = (
             <React.Fragment>
                             {!this.state.loggedIn? loginForm : selectActiveStoreComponent }
@@ -234,9 +239,17 @@ class Page extends Component {
 
         return (
             <React.Fragment>
-                {signIn}
+                <div style={{
+                    position: "fixed",
+                    width: "100%",
+                    height: "100%",
+                    background: "linear-gradient(45deg,#200,#205)"
+                }}>
+                    {signIn}
+                </div>
             </React.Fragment>
         );
     }
 }
+
 export default withStyles(styles)(Page);

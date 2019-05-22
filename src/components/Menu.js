@@ -1,24 +1,16 @@
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
-import AppBar from "@material-ui/core/AppBar";
-import Drawer from "@material-ui/core/es/Drawer/Drawer";
 import List from "@material-ui/core/es/List/List";
 import ListItem from "@material-ui/core/es/ListItem/ListItem";
-import IconButton from "@material-ui/core/es/IconButton/IconButton";
 import ListItemIcon from "@material-ui/core/es/ListItemIcon/ListItemIcon";
-import MenuIcon from "@material-ui/icons/Menu";
 import Toolbar from "@material-ui/core/es/Toolbar/Toolbar";
-import HomeIcon from "@material-ui/icons/Home";
 import ListItemText from "@material-ui/core/ListItemText";
-import ProductIcon from "@material-ui/icons/AddBoxRounded";
 import BlogIcon from "@material-ui/icons/TextFormat";
-import { Link } from "react-router-dom";
-import Typography from "@material-ui/core/Typography";
+import {Link} from "react-router-dom";
 import Divider from "@material-ui/core/Divider";
-import ButtonBase from "@material-ui/core/ButtonBase";
 import ListSubheader from "@material-ui/core/es/ListSubheader";
 import Avatar from "@material-ui/core/Avatar"
-import { AddShoppingCartRounded as AddShoppingCart , Category, CategorySharp, PeopleOutline, RoomService, Business, VerifiedUser} from "@material-ui/icons";
+import {AddShoppingCartRounded as AddShoppingCart, Business, CategorySharp, PeopleOutline} from "@material-ui/icons";
 
 let styles = {
   root: {},
@@ -64,7 +56,7 @@ class Menu extends React.Component {
             <ListItemText primary={"Admin"} />
           </ListItem>
           <List>
-            <ListSubheader> Store </ListSubheader>
+              <ListSubheader style={{background: "red"}}> Store </ListSubheader>
             <Divider />
             <ListItem component={Link} to={"/categories"}>
               <ListItemIcon>

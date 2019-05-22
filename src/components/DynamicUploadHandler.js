@@ -3,6 +3,7 @@ import React from "react";
 import {ButtonBase, LinearProgress} from "@material-ui/core";
 import axios from 'axios'
 import AppContext from "../AppContext"
+
 export default class Uploader extends React.Component {
     constructor(props){
         super(props)
@@ -14,6 +15,7 @@ export default class Uploader extends React.Component {
         sent: false,
         finishedUpload: false
     };
+
     watchFileChange = event => {
         event.persist();
         //let reader= new FileReader()

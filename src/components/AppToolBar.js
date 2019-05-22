@@ -1,15 +1,12 @@
 import react from "react";
-import {
-    AppBar,
-    Toolbar
-} from "@material-ui/core";
 import React from "react";
+import {AppBar, Toolbar} from "@material-ui/core";
 
 export default class Component extends  react.Component{
 
     render(){
 
-       return  <AppBar position={"relative"} elevation={0}>
+        return <AppBar position={this.props.position ? this.props.position : "relative"} elevation={0}>
             <Toolbar
                 style={{
                     widht:"100%",

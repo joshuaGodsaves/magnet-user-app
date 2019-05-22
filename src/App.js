@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import AppMenu from "./components/Menu";
 import Toolbar from "@material-ui/core/Toolbar";
-import {AppBar, IconButton, MenuItem, Menu} from "@material-ui/core";
+import {AppBar, IconButton, Menu, MenuItem} from "@material-ui/core";
 import CategoryIndexPage from "./activities/Category/Index";
 import ProductIndexPage from "./activities/Product/Index";
 import CustomersIndexPage from "./activities/Customer/Index";
@@ -12,7 +12,6 @@ import More from "@material-ui/icons/MoreVert"
 import BlogIndexPage from "./activities/Blog/Index";
 import withStyles from "@material-ui/core/styles/withStyles";
 import {BrowserRouter, Route, Switch} from "react-router-dom";
-import NotificationIcon from "@material-ui/icons/Notifications";
 import AppContext from "./AppContext";
 import Drawer from "@material-ui/core/Drawer";
 import {Menu as MenuIcon} from "@material-ui/icons";
@@ -49,6 +48,7 @@ class App extends Component {
     super(props);
   }
   state = {
+    floatDrawer: false,
     anchoEl: null,
     appBar: {
       height: undefined
@@ -91,7 +91,6 @@ class App extends Component {
         store: store
       })
     );
-
     this.setState(state=>{
       state.user= {
         userName: userName,
@@ -127,12 +126,13 @@ class App extends Component {
   componentDidMount() {
     let getWidth = () => {
       let clientWidth = document.body.clientWidth;
-      if (clientWidth <= 750) {
-        this.setState({ drawerOpen: false });
+      if (clientWidth <= 800) {
+        this.setState({drawerOpen: false, drawerVariant: "", floatDrawer: true});
       } else {
         this.setState({ drawerOpen: true });
       }
     };
+
     getWidth();
     window.addEventListener("resize", () => {
       getWidth();
@@ -175,13 +175,13 @@ class App extends Component {
       <React.Fragment>
         <AppBar
             elevation={0}
-            color={"primary"}
             position={"fixed"}
             style={{
               zIndex: 4000,
               width: this.state.drawerOpen ? `calc(100% - ${drawerWidth}px)` : "100%",
               marginLeft:this.state.drawerOpen ? drawerWidth : 0,
               display: "flex",
+              background: "linear-gradient(45deg,#200,#205)",
               justifyContent: "space-between"
             }}
         >
@@ -193,7 +193,7 @@ class App extends Component {
               <MenuIcon />
             </IconButton>
             <div>
-            <IconButton onClick={this.handleMenuDropDown}>
+              <IconButton onClick={this.handleMenuDropDown} color={"inherit"}>
               <More aria-owns={anchorEl ? 'simple-menu' : undefined}
                     aria-haspopup="true"
                     onClick={this.handleClick}/>
@@ -202,23 +202,22 @@ class App extends Component {
             </div>
           </Toolbar>
         </AppBar>
-        <div style={{ display: "flex", width: "100%" , flexWrap:"nowrap"}}>
-          <div
-            className={
-              this.state.drawerOpen ? classes.drawer : classes.drawerOut
-            }
-          >
-            <Drawer
-              variant={"persistent"}
-              open={this.state.drawerOpen}
-              classes={{
-                paper: this.state.drawerOpen
+        <Drawer
+            variant={"persistent"}
+            open={this.state.drawerOpen}
+            classes={{
+              paper: this.state.drawerOpen
                   ? classes.drawerPaper
                   : classes.drawerOut
-              }}
-            >
-              <AppMenu />
-            </Drawer>
+            }}
+        >
+          <AppMenu/>
+        </Drawer>
+        <div style={{display: "flex", flexWrap: "nowrap", overflow: "hidden"}}>
+          <div className={
+            this.state.drawerOpen ? classes.drawer : classes.drawerOut
+          }>
+
           </div>
           <div
             style={{ width: "100%", marginTop: 64 }}

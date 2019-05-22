@@ -2,18 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4229a722-d18e-4aeb-ae21-1a60c24ab8e2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/SignupSignin.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/DynamicUploadHandler.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/ProductGalleryDialog.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/activities/Order/New.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/AppContext.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/AppContext.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/activities/Index/DefaultLandingPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/activities/Index/DefaultLandingPage.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/activities/Product/Index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/activities/Product/Index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/activities/Product/Product.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/activities/Product/Product.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/activities/Product/Products.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/activities/Product/Products.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Menu.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Menu.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DataSource.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/DataSource.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SignupSignin.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/SignupSignin.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/activities/Order/Index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/activities/Order/Index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/activities/Order/Orders.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/activities/Order/Orders.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/DynamicUploadHandler.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/DynamicUploadHandler.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -33,11 +29,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/App.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1394">
-              <caret line="113" column="41" selection-start-line="113" selection-start-column="41" selection-end-line="113" selection-end-column="41" />
-              <folding>
-                <element signature="e#0#41#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="1615">
+              <caret line="113" selection-start-line="113" selection-end-line="113" />
             </state>
           </provider>
         </entry>
@@ -57,11 +50,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/components/ImageSelectionComponent.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3842">
-              <caret line="350" column="15" lean-forward="true" selection-start-line="350" selection-start-column="15" selection-end-line="350" selection-end-column="15" />
-              <folding>
-                <element signature="n#NewImage#0" />
-              </folding>
+            <state relative-caret-position="5457">
+              <caret line="350" column="15" selection-start-line="350" selection-start-column="15" selection-end-line="350" selection-end-column="15" />
             </state>
           </provider>
         </entry>
@@ -70,7 +60,7 @@
         <entry file="file://$PROJECT_DIR$/src/activities/Product/Products.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="85">
-              <caret line="5" column="46" selection-start-line="5" selection-start-column="46" selection-end-line="5" selection-end-column="46" />
+              <caret line="5" column="38" selection-start-line="5" selection-start-column="38" selection-end-line="5" selection-end-column="38" />
             </state>
           </provider>
         </entry>
@@ -78,8 +68,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/activities/Product/Product.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1955">
-              <caret line="142" column="4" selection-start-line="137" selection-start-column="4" selection-end-line="142" selection-end-column="4" />
+            <state relative-caret-position="1819">
+              <caret line="142" column="4" selection-start-line="137" selection-end-line="142" selection-end-column="4" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
               </folding>
@@ -90,8 +80,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/components/DynamicUploadHandler.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
-              <caret line="9" column="35" lean-forward="true" selection-start-line="9" selection-start-column="35" selection-end-line="9" selection-end-column="35" />
+            <state relative-caret-position="136">
+              <caret line="8" column="5" lean-forward="true" selection-start-line="8" selection-start-column="5" selection-end-line="8" selection-end-column="5" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
               </folding>
@@ -186,10 +176,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="381" />
-    <option name="y" value="25" />
-    <option name="width" value="858" />
-    <option name="height" value="743" />
+    <option name="x" value="147" />
+    <option name="y" value="19" />
+    <option name="width" value="1075" />
+    <option name="height" value="738" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -197,22 +187,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="flat-lubi-ep-theme" type="b2602c69:ProjectViewProjectNode" />
-              <item name="flat-lubi-ep-theme" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="flat-lubi-ep-theme" type="b2602c69:ProjectViewProjectNode" />
-              <item name="flat-lubi-ep-theme" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
+      <pane id="ProjectPane" />
       <pane id="Scope" />
     </panes>
   </component>
@@ -296,11 +271,12 @@
       <workItem from="1554382592782" duration="4688000" />
       <workItem from="1554413185502" duration="17776000" />
       <workItem from="1554558270707" duration="404000" />
+      <workItem from="1558290278152" duration="60000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="233294000" />
+    <option name="totallyTimeSpent" value="233354000" />
   </component>
   <component name="TodoView" selected-index="3">
     <todo-panel id="selected-file">
@@ -312,10 +288,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
+    <frame x="-8" y="-8" width="1382" height="784" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.27231467" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14934114" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="npm" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
@@ -333,7 +309,7 @@
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Terminal" order="3" sideWeight="0.4985119" visible="true" weight="0.11422088" />
+      <window_info active="true" anchor="right" id="Terminal" order="3" sideWeight="0.4985119" visible="true" weight="0.32796487" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -654,11 +630,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/App.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1394">
-          <caret line="113" column="41" selection-start-line="113" selection-start-column="41" selection-end-line="113" selection-end-column="41" />
-          <folding>
-            <element signature="e#0#41#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="1615">
+          <caret line="113" selection-start-line="113" selection-end-line="113" />
         </state>
       </provider>
     </entry>
@@ -672,17 +645,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/ImageSelectionComponent.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5457">
+          <caret line="350" column="15" selection-start-line="350" selection-start-column="15" selection-end-line="350" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/activities/Product/Products.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
-          <caret line="5" column="46" selection-start-line="5" selection-start-column="46" selection-end-line="5" selection-end-column="46" />
+          <caret line="5" column="38" selection-start-line="5" selection-start-column="38" selection-end-line="5" selection-end-column="38" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/activities/Product/Product.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1955">
-          <caret line="142" column="4" selection-start-line="137" selection-start-column="4" selection-end-line="142" selection-end-column="4" />
+        <state relative-caret-position="1819">
+          <caret line="142" column="4" selection-start-line="137" selection-end-line="142" selection-end-column="4" />
           <folding>
             <element signature="e#0#26#0" expanded="true" />
           </folding>
@@ -696,20 +676,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/ImageSelectionComponent.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3842">
-          <caret line="350" column="15" lean-forward="true" selection-start-line="350" selection-start-column="15" selection-end-line="350" selection-end-column="15" />
-          <folding>
-            <element signature="n#NewImage#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/components/DynamicUploadHandler.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="35" lean-forward="true" selection-start-line="9" selection-start-column="35" selection-end-line="9" selection-end-column="35" />
+        <state relative-caret-position="136">
+          <caret line="8" column="5" lean-forward="true" selection-start-line="8" selection-start-column="5" selection-end-line="8" selection-end-column="5" />
           <folding>
             <element signature="e#0#26#0" expanded="true" />
           </folding>

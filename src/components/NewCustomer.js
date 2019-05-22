@@ -1,7 +1,15 @@
 import React from "react"
-import {Grid, Button, IconButton, Typography, Drawer, Divider, Fab,
-OutlinedInput, FormLabel, FormControl, FormHelperText, Paper} from "@material-ui/core"
-import Cancel from "@material-ui/icons/Cancel"
+import {
+    Button,
+    Divider,
+    Drawer,
+    FormControl,
+    FormLabel,
+    Grid,
+    OutlinedInput,
+    Paper,
+    Typography
+} from "@material-ui/core"
 import DataSource from "../DataSource"
 import AppContext from "../AppContext"
 import withStyles from "@material-ui/core/styles/withStyles"
@@ -48,12 +56,10 @@ class NewCustomerComponent extends  React.Component{
         let data= this.state
         data.userName= `${data.firstName}${data.lastName}`
         data.password= "pass"
-        console.log(data)
        let newEpUser= await  this.dataSource.createEPCustomer(data)
         if(newEpUser){
             console.log(newEpUser)
-            let id= newEpUser._id
-            let done= await this.dataSource.postStoreCustomer({customer: id})
+            let done = await this.dataSource.postStoreCustomer({customer: newEpUser.user})
             if(done){
                 this.props.onFinish(true)
             }
