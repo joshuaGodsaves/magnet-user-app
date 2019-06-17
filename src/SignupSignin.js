@@ -151,7 +151,6 @@ class Page extends Component {
             let store = this.state.stores[index]
         let {userName, token} = this.state
         console.log(this.state)
-
             this.props.loggedInUser(userName, token, store)
         // console.log("loading app")
         //let token= await axios.get(`http://localhost:5000/api/user/${this.state.userName}`)

@@ -9,11 +9,12 @@ export default class Component extends  react.Component{
         return <AppBar position={this.props.position ? this.props.position : "relative"} elevation={0}>
             <Toolbar
                 style={{
-                    widht:"100%",
+                    width:"100%",
                     color: "white",
                     display: "flex",
                     justifyContent: "space-between",
-                    alignItems:"center"
+                    alignItems:"center",
+                    variant:"condensed"
                 }}
             >
                 {this.props.children}

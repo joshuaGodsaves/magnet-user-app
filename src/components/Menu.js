@@ -9,6 +9,7 @@ import BlogIcon from "@material-ui/icons/TextFormat";
 import {Link} from "react-router-dom";
 import Divider from "@material-ui/core/Divider";
 import ListSubheader from "@material-ui/core/es/ListSubheader";
+import {FaLayerGroup} from "react-icons/fa"
 import Avatar from "@material-ui/core/Avatar"
 import {AddShoppingCartRounded as AddShoppingCart, Business, CategorySharp, PeopleOutline} from "@material-ui/icons";
 
@@ -40,6 +41,8 @@ class Menu extends React.Component {
   render() {
     let { primaryMenuOpen } = this.state;
     let { classes } = this.props;
+
+
     let menuList = (
       <div>
         <Toolbar position={"relative"}>
@@ -49,15 +52,15 @@ class Menu extends React.Component {
         </Toolbar>
         <Divider/>
         <List style={{ paddingTop: 0 }}>
-          <ListItem component={Link} to={"/"}>
-            <ListItemIcon>
-              <Avatar />
-            </ListItemIcon>
-            <ListItemText primary={"Admin"} />
-          </ListItem>
           <List>
-              <ListSubheader style={{background: "red"}}> Store </ListSubheader>
+              <ListSubheader style={{background: "ghostwhite"}}> Store </ListSubheader>
             <Divider />
+            <ListItem component={Link} to={"/Sections"}>
+              <ListItemIcon>
+                <FaLayerGroup/>
+              </ListItemIcon>
+              <ListItemText primary={"Section"} />
+            </ListItem>
             <ListItem component={Link} to={"/categories"}>
               <ListItemIcon>
                 <CategorySharp/>

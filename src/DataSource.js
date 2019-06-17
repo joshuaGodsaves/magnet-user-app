@@ -12,7 +12,6 @@ export default class DataSource {
             }
         })
     }
-
     async getStoreCategories() {
         let categories = await this.axios.get(`${this.API_URL}/${this.storeId}/category`)
         return categories;
@@ -108,7 +107,7 @@ export default class DataSource {
     async getUser(id) {
         let result = await this.axios.get(`http://localhost:5000/api/user/${id}`)
         if (result) {
-            return result.data
+            return result
         } else {
             return false
         }
