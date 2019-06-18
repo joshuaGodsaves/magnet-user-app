@@ -27,7 +27,7 @@ import GridList from "@material-ui/core/GridList";
 import axios from "axios";
 import Grid from "@material-ui/core/Grid";
 import Uploader from "./DynamicUploadHandler";
-import AppContext from '../AppContext'
+import StoreContext from '../activities/store/StoreContext'
 
 let styles = {
   root: {
@@ -45,7 +45,7 @@ let styles = {
 };
 
 class UploadImageDialog extends React.Component {
-    static contextType = AppContext
+    static contextType = StoreContext
   state = {
       open: true,
       url: "",
@@ -57,17 +57,19 @@ class UploadImageDialog extends React.Component {
     let uploadElement = window.document.getElementById("uploadElement");
     uploadElement.click();
   };
+
   handleUploadElementChange = e => {
     e.persist();
     this.setState({ file: e.currentTarget.files[0] });
     this.handleUpload()
   };
+
   handleUpload = async () => {
     let data = new FormData();
     data.append("file",this.state.file);
-    let result=axios.post(`http://localhost:5000/api/store/${this.context.user.store}/upload`, data, {
+    let result=axios.post(`http://localhost:5000/api/store/${this.context.store.id}/upload`, data, {
       headers:{
-        "X-auth-license": this.context.user.token
+        "X-auth-license": this.context.store.token
       }
     })
 
@@ -99,7 +101,7 @@ class UploadImageDialog extends React.Component {
       )
     return (
       <React.Fragment>
-        <Dialog open={this.state.open} maxWidth={"sm"} fullWidth style={{zIndex:40000}}>
+        <Dialog open={this.state.open} maxWidth={"xs"} fullWidth style={{zIndex:40000}}>
             <DialogTitle>
                 <Typography variant={"h6"}> Upload Image</Typography>
             </DialogTitle>
@@ -161,7 +163,7 @@ class UploadImageDialog extends React.Component {
 }
 
 class Component extends React.Component {
- static contextType = AppContext;
+ static contextType = StoreContext;
   state = {
     uploadAsset: false,
     currentTab: 0,
@@ -217,12 +219,12 @@ class Component extends React.Component {
   getStoreResources= ()=>{
     console.log("getting resources")
     axios
-        .get(`http://localhost:/api/store/${this.context.user.store}/upload`, {
+        .get(`http://localhost:/api/store/${this.context.store.id}/upload`, {
           params: {
             query: this.state.query
           },
           headers: {
-            "X-auth-license": this.context.user.token
+            "X-auth-license": this.context.store.token
           }
         })
         .then(val => {

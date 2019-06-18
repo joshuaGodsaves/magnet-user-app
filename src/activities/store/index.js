@@ -3,13 +3,13 @@ import React, {Component} from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import {Grid, Typography, AppBar, Toolbar, Drawer, ButtonBase, List, Paper} from "@material-ui/core"
 import {Switch, Link, Route} from "react-router-dom";
-
 import StorePrimaryMenu from "./components/menu"
 import PrimaryMenu from "../../components/AppPrimaryMenu"
 import defaultStorePage from "./default"
 import StoreContext from "./StoreContext"
 import productIndex from "./Product/Index"
 import orderIndex from "./Order/Index"
+import sectionIndex from "./Section/Index"
 import categoryIndex from "./Category/Index"
 import customerIndex from "./Customer/Index"
 let drawerWidth = 220;
@@ -94,6 +94,7 @@ class App extends Component {
                                     <Route path={`/stores/${this.state.activeStore}/orders` }   component={orderIndex}/>
                                     <Route path={`/stores/${this.state.activeStore}/categories` }   component={categoryIndex}/>
                                     <Route path={`/stores/${this.state.activeStore}/customers` }   component={customerIndex}/>
+                                    <Route path={`/stores/${this.state.activeStore}/sections` }   component={sectionIndex}/>
                                 </Switch>
                             </Grid>
                         </Grid>

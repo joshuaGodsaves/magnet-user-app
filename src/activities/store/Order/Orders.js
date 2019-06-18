@@ -177,12 +177,12 @@ class TableProductsView extends React.Component {
             {this.state.selected.length !== 0
                 ? selectedCategoriesOptionToolBar
                 : defaultToolbar}
-            <Grid container>
-              <Grid item xs={12}>
+            <Grid container justify={"center"}>
+              <Grid item xs={11}>
                 {this.state.orders.map((v, i) => (
-                    <Paper style={{margin:"16px 0px"}} elevation={1}>
+                    <Paper style={{margin:"8px 0px"}} elevation={1}>
                       <Grid container alignItems={"center"} justify={"space-between"}>
-                        <Grid item md={6}>
+                        <Grid item xs={12} md={6}>
                           <Grid container>
                             <Grid item>
                               <Checkbox
@@ -198,7 +198,7 @@ class TableProductsView extends React.Component {
                             </Grid>
                           </Grid>
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={12} md={6}>
                           <Grid container justify={"space-between"} alignItems={"center"}>
                             <Grid>
                               <Chip variant={"outlined"} label={"status"} color={"primary"}/>
@@ -206,7 +206,6 @@ class TableProductsView extends React.Component {
                             <Grid item>
                               {new Date().toDateString()}
                             </Grid>
-
                             <Grid item>
                               <Chip label={v.items.length} variant={"outlined"} color={"primary"}/>
                             </Grid>

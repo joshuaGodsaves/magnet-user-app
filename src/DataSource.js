@@ -17,6 +17,13 @@ export default class DataSource {
         return categories;
     }
 
+    async getStoreSections() {
+        let sections = await this.axios.get(`${this.API_URL}/${this.storeId}/section`)
+        return sections;
+    }
+
+
+
     async getStoreCategory(id) {
         let category = await this.axios.get(`${this.API_URL}/${this.storeId}/category/${id}`)
         return category;

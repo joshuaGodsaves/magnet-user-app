@@ -18,7 +18,6 @@ import {
     TableHead,
     TableRow, Grid, Chip
 } from "@material-ui/core";
-import AppToolBar from "../../../components/AppToolBar"
 import DataSource from "../../../DataSource"
 
 let styles = {
@@ -41,13 +40,13 @@ class TableProductsView extends React.Component {
     loading: false,
     loaded: false,
     selected: [],
-    categories: [
+    sections: [
     ]
   };
   selectAll = (event, checked) => {
     if (checked) {
       this.setState(state => {
-        state.selected= state.products.map(v=> v._id)
+        state.selected= state.sections.map(v=> v._id)
         return state;
       });
     } else {
@@ -79,15 +78,14 @@ class TableProductsView extends React.Component {
   }
 
   componentDidMount() {
-    this.dataSource.getStoreCategories().then(v=>{
-      let categories= v.data.items
-      this.setState({categories:categories})
+    this.dataSource.getStoreSections().then(v=>{
+      let sections= v.data.items
+      this.setState({sections:sections})
       this.setState({loaded: true})
       this.setState({loading:false})
     }).catch(v=> {console.log(v); })
     this.setState({loading: true})
   }
-
   static contextType= StoreContext
 
   render() {
@@ -110,7 +108,7 @@ class TableProductsView extends React.Component {
         <Paper>
           <Toolbar style={{display:'flex', justifyContent:"space-between"}}>
             <Typography variant={"h6"}>
-              Store categories
+              Store Sections
             </Typography>
             <div>
                 <IconButton>
@@ -118,7 +116,7 @@ class TableProductsView extends React.Component {
                 </IconButton>
                 <Button
                     variant={"contained"}
-                            to={"/stores/${this.context.store.id}/categories/new"}
+                            to={`/stores/${this.context.store.id}/sections/new`}
                             component={Link}>
                   <Add/>
                   CREATE
@@ -134,27 +132,27 @@ class TableProductsView extends React.Component {
                 ? selectedCategoriesOptionToolBar
                 : defaultToolbar}
 
-            <Grid container justify={"center"}>
-                {this.state.categories.map((category, i) => (
-                <Grid item xs={12} md={6}>
-                        <Paper style={{margin:"8px 8px"}} elevation={1}>
-                            <Grid container alignItems={"center"} justify={"space-between"} spacing={8}>
+            <Grid container spacing={8} justify={"center"}>
+                {this.state.sections.map((section, i) => (
+                <Grid item xs={11} md={6}>
+                        <Paper style={{margin:"8px 0px"}} elevation={1}>
+                            <Grid container alignItems={"center"} justify={"space-between"}>
                                 <Grid item>
                                     <Checkbox
                                         color={"primary"}
-                                        checked={this.state.selected.some(v2 => v2 == category._id)}
-                                        onChange={this.selectSingle(category._id)}
+                                        checked={this.state.selected.some(v2 => v2 == section._id)}
+                                        onChange={this.selectSingle(section._id)}
                                     />
                                 </Grid>
                                 <Grid item>
                                     <IconButton>
                                         <FaProductHunt/>
                                     </IconButton>
-                                    {category.title}
+                                    {"sectiion.title product heere"}
                                 </Grid>
                                 <Grid item>
                                     <IconButton component={Link}
-                                                to={`/stores/${this.context.store.id}/categories/${category._id}`}><MoreHoriz/></IconButton>
+                                                to={`/stores/${this.context.store.id}/sections/${section._id}`}><MoreHoriz/></IconButton>
                                 </Grid>
                             </Grid>
                         </Paper>
@@ -174,7 +172,7 @@ class TableProductsView extends React.Component {
         <React.Fragment>
           {this.state.loading? <LinearProgress/> :
               <div>
-            {this.state.categories.length == 0
+            {this.state.sections.length == 0
                 ? productsNotAvailable
                 : productsAvailable}
           </div>

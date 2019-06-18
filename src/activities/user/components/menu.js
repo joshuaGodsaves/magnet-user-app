@@ -22,13 +22,11 @@ class App extends Component {
     constructor(props) {
         super(props);
     }
-    
     render() {
         return (
             <React.Fragment>
                 <List>
-
-                    <ListItem component={Link} to={"/stores"} >
+                    <ListItem component={Link} to={"/list-stores"} >
                         <ListItemIcon><Shop/> </ListItemIcon>
                         <ListItemText> Stores</ListItemText>
                     </ListItem>

@@ -58,22 +58,22 @@ class App extends Component {
                     <AppBar style={{zIndex:2000}}>
                         <Toolbar style={{display:"flex", alignItems:"center", justifyContent:"space-between", color:"white"}}>
                             <Grid container justify={"space-between"} alignItems={"center"}>
-                                <Grid>
+                                <Grid sm={2} item>
                                     <IconButton onClick={this.props.triggerMenuClick} color={"inherit"}>
                                         <MenuIcon/>
                                     </IconButton>
                                 </Grid>
-                                <Grid item md={5}>
+                                <Grid item sm={7} md={5}>
                                     <Paper style={{padding:"4px 8px", background:"rgba(0,0,0,0.5)"}} elevation={0}>
                                         <InputBase style={{width:"100%", color:"white"}} startAdornment={<Search/>} color={"inherit"}/>
                                     </Paper>
                                 </Grid>
-                                <Grid item>
-                                    <div style={{display:"flex", alignItems:"center"}}>
+                                <Grid item sm={2}>
+                                    <div style={{display:"flex", justifyContent:"flex-end",alignItems:"center"}}>
                                         <IconButton color={"inherit"}>
                                             <Notifications/>
                                         </IconButton>
-                                        <Button variant={"outlined"} onClick={this.selectStoreTrigger} style={{margin:"0px 8px"}} color={"inherit"}>
+                                       {/* <Button variant={"outlined"} onClick={this.selectStoreTrigger} style={{margin:"0px 8px"}} color={"inherit"}>
                                             {this.state.selectedStore}
                                             <ArrowDropDownIcon/>
                                         </Button>
@@ -87,10 +87,10 @@ class App extends Component {
                                             {this.state.stores.map(v=>(
                                                 <MenuItem component={Link} to={`/stores/${v._id}`}>{v._id}</MenuItem>
                                             ))}
-                                        </Menu>
-                                        <Typography color={"inherit"}>
+                                        </Menu>*/}
+                                        {/*<Typography color={"inherit"}>
                                             {this.context.user.email}
-                                        </Typography>
+                                        </Typography>*/}
                                         <Avatar style={{margin:"0px 8px"}}/>
                                     </div>
                                 </Grid>

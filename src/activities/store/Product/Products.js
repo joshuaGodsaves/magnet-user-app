@@ -181,12 +181,12 @@ class TableProductsView extends React.Component {
         <Toolbar style={{marin:"16px 0px"}}>
           {defaultToolbar}
         </Toolbar>
-        <Grid container>
-          <Grid item xs={12}>
+        <Grid container justify={"center"}>
+          <Grid item xs={11}>
             {this.state.products.map((product, i) => (
-                <Paper style={{margin:"16px 0px"}} elevation={1}>
+                <Paper style={{margin:"8px 0px", padding:12}} elevation={1}>
                   <Grid container alignItems={"center"} justify={"space-between"}>
-                    <Grid item md={6}>
+                    <Grid item xs={12} md={6}>
                       <Grid container>
                         <Grid item>
                           <Checkbox
@@ -203,7 +203,7 @@ class TableProductsView extends React.Component {
                         </Grid>
                       </Grid>
                     </Grid>
-                    <Grid item md={6}>
+                    <Grid item xs={12} md={6}>
                       <Grid container justify={"space-between"} alignItems={"center"}>
                         <Grid>
                           <Chip variant={"outlined"} label={"avail"} color={"primary"}/>
@@ -213,7 +213,7 @@ class TableProductsView extends React.Component {
                         </Grid>
                         <Grid item>
                           <div>
-                            <Chip label={product.categories[0]} color={"primary"}/>
+                            <Chip label={product.categories.length} color={"primary"}/>
                           </div>
                         </Grid>
                         <Grid item>
@@ -239,6 +239,7 @@ class TableProductsView extends React.Component {
         </Typography>
       </div>
     );
+
     return (
       <React.Fragment>
         {this.state.loading? <LinearProgress/> :
@@ -248,7 +249,6 @@ class TableProductsView extends React.Component {
                   : productsAvailable}
             </div>
         }
-
       </React.Fragment>
     );
   }
