@@ -18,8 +18,8 @@ import {
   Tabs
 } from "@material-ui/core";
 import axios from "axios";
-import AppContext from "../../AppContext";
-import DataSource from "../../DataSource"
+import StoreContext from "../StoreContext";
+import DataSource from "../../../DataSource"
 
 let styles = {
   listItem: {
@@ -60,7 +60,7 @@ let styles = {
 function CustomerPrimaryDetails (props){
   return (
       <React.Fragment>
-          <Grid container style={{background:"grey", height:"300px",alignItems:"flex-end", padding:"24px 24px"}}
+          <Grid container style={{background:"ghostwhite", height:"300px",alignItems:"flex-end", padding:"24px 24px"}}
                 justify={"center"}
                 spacing={12}>
             <Grid item>
@@ -77,7 +77,6 @@ class CustomerTransactionsComponent extends React.Component {
 
   state = {
     anchorEl: undefined
-
   }
 
   openMenu = () => {
@@ -154,7 +153,7 @@ function CustomerLocation(){
 }
 
 class Customer extends React.Component {
-  static contextType = AppContext;
+  static contextType = StoreContext;
 
   state = {
     currentTab: 1,
@@ -171,7 +170,7 @@ class Customer extends React.Component {
   };
 
   componentWillMount() {
-    this.dataSource= new DataSource(this.context.user.token, this.context.user.store)
+    this.dataSource= new DataSource(this.context.store.token, this.context.store.id)
     let {match: {params}} = this.props
     if (params.customer == "new") {
       this.setState({isNewCustomer: true})
@@ -192,7 +191,7 @@ class Customer extends React.Component {
 
   loadCustomer = async (customerId) => {
     let customer;
-      customer = await axios.get(`http://localhost:5000/api/store/${this.context.user.store._id}/customer/${customerId}`)
+      customer = await axios.get(`http://localhost:5000/api/store/${this.context.store.id}/customer/${customerId}`)
     if(!customer){
       return
     }
@@ -200,7 +199,7 @@ class Customer extends React.Component {
   }
 
   loadTransactions = (customerName) => {
-    this.dataSource = new DataSource(this.context.user.token, this.context.user.store._id)
+    this.dataSource = new DataSource(this.context.store.token, this.context.store.id)
     this.dataSource.getStoreTransactions({customer: customerName}).then(v => {
       let data = v.data
       let orders = data.items

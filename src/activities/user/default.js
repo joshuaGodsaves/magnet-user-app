@@ -6,7 +6,7 @@ import {
     Button,Paper, Avatar, ExpansionPanel, ExpansionPanelSummary,
     ExpansionPanelActions, ExpansionPanelDetails, IconButton
 } from "@material-ui/core"
-import {ArrowDownward, ArrowDropDown} from "@material-ui/icons"
+import {ArrowDownward, ArrowDropDown, MessageOutlined, Store} from "@material-ui/icons"
 import {Switch, Link, Route} from "react-router-dom";
 
 let drawerWidth = 220;
@@ -37,15 +37,18 @@ class App extends Component {
             <React.Fragment>
                 <Grid container spacing={8}>
                     <Grid item md={12}>
-                        <Paper style={{padding: 24}}>
-                            <Avatar/>
-                            <Typography> User Name</Typography>
+                        <Paper style={{padding: 24, height: 300, display:"flex", alignItems:"flex-end"}}>
+                            <div>
+                                <Avatar/>
+                                <Typography> User Name</Typography>
+                            </div>
                         </Paper>
                     </Grid>
 
-                    <Grid item md={6}>
+                    <Grid item sm={11} md={6}>
                         <ExpansionPanel >
-                            <ExpansionPanelSummary expandIcon={<ArrowDownward/>}>
+                            <ExpansionPanelSummary expandIcon={<ArrowDownward/>}  style={{background:"ghostwhite"}}>
+                                <Store style={{marginRight:"12px", color:"grey"}}/>
                                 <Typography> Stores </Typography>
                             </ExpansionPanelSummary>
                             <ExpansionPanelDetails>
@@ -58,9 +61,10 @@ class App extends Component {
                             </ExpansionPanelActions>
                         </ExpansionPanel>
                     </Grid>
-                    <Grid item md={6}>
+                    <Grid item  sm={11}  md={6}>
                         <ExpansionPanel>
-                            <ExpansionPanelSummary expandIcon={<ArrowDownward/> }>
+                            <ExpansionPanelSummary expandIcon={<ArrowDownward/> } style={{background:"ghostwhite"}}>
+                                <MessageOutlined  style={{marginRight:"12px", color:"grey"}}/>
                                 <Typography> Messages </Typography>
                             </ExpansionPanelSummary>
                             <ExpansionPanelDetails>

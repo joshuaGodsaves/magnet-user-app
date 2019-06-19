@@ -24,25 +24,25 @@ class App extends Component {
     }
 
     state={
-        menuOpen: true
+        menuOpen: true,
+        activateToggleMenuButton: false
     }
 
     openUserMenu = ()=>{
-        this.setState({menuOpen: !this.state.menuOpen, disablePermanentDrawer: true})
+        if(this.state.activateToggleMenuButton) {
+            this.setState({menuOpen: !this.state.menuOpen, disablePermanentDrawer: true})
+        }
     }
 
     componentDidMount() {
-
         let  reset = ()=>{
             if(window.innerWidth < 800){
-                this.setState({menuOpen: false, disablePermanentDrawer: false})
+                this.setState({menuOpen: false, disablePermanentDrawer: false, activateToggleMenuButton: true})
             }else{
-                this.setState({menuOpen: true, disablePermanentDrawer: true})
+                this.setState({menuOpen: true, disablePermanentDrawer: true, activateToggleMenuButton: false})
             }
         }
-
         reset()
-
         window.addEventListener("resize", function (){
             reset()
         })
@@ -50,29 +50,35 @@ class App extends Component {
 
     render() {
         let {classes}= this.props
-        let menuWidth= "100%"
         let marginLeft=`0px`
+        let contentWidth= "100%"
         if(this.state.menuOpen){
-            menuWidth= `calc(100% -${drawerWidth}px)`
+            contentWidth= `calc(100% -${drawerWidth}px)`
             marginLeft= `${drawerWidth}px`
+        }
+
+        if(this.state.activateToggleMenuButton){
+            contentWidth= "100%"
+                marginLeft=`0px`
+        }else{
         }
         return (
             <React.Fragment>
                 <PrimaryMenu triggerMenuClick={ this.openUserMenu }/>
                 <AppBar position={"relative"} style={{zIndex:0}}><Toolbar></Toolbar></AppBar>
                 <Drawer open={this.state.menuOpen} style={{width:drawerWidth}} classes={{paper: classes.drawerPaper}}
-                        variant={this.state.disablePermanentDrawer? "permanent": "temporary"}
+                        variant={this.state.disablePermanentDrawer? "persistent": "temporary"}
                 >
                     <Toolbar/>
                     <UserMenuList>
                     </UserMenuList>
                 </Drawer>
-                <div style={{width:menuWidth, marginLeft: marginLeft}}>
-                    <Grid container justify={"center"} style={{marginTop:24}}>
-                        <Grid item md={10}>
+                <div style={{width:contentWidth, marginLeft: marginLeft}}>
+                    <Grid container justify={"center"} style={{marginTop:24}} wrap={"wrap"}>
+                        <Grid item md={11}>
                             <Switch>
                                 <Route path={"/" }  exact component={defaultUserActivity}/>
-                                <Route path={"/stores" } exact component={storeActivity}/>
+                                <Route path={"/list-stores" } exact component={storeActivity}/>
                             </Switch>
                         </Grid>
                     </Grid>

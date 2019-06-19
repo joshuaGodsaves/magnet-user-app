@@ -3,12 +3,13 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography";
 import {Add, Delete, Edit, MoreHoriz, Refresh} from "@material-ui/icons";
 import {Link} from "react-router-dom";
+import {FaProductHunt, FaDollarSign} from "react-icons/fa"
 import Button from "@material-ui/core/Button";
-import AppContext from "../../AppContext"
+import StoreContext from "../StoreContext"
 import {
   ButtonBase,
   Checkbox,
-  Chip, Grid,
+  Chip, Grid, Toolbar,
   IconButton,
   LinearProgress,
   Menu,
@@ -20,9 +21,9 @@ import {
   TableHead,
   TableRow
 } from "@material-ui/core";
-import PageAppBar from "../../components/ActivityPrimaryAppBar";
-import AppToolBar from "../../components/AppToolBar"
-import DataSource from "../../DataSource"
+import PageAppBar from "../../../components/ActivityPrimaryAppBar";
+import AppToolBar from "../../../components/AppToolBar"
+import DataSource from "../../../DataSource"
 import {MdGroup} from "react-icons/md";
 import {FaMailBulk, FaUserCircle} from "react-icons/fa";
 
@@ -81,7 +82,7 @@ class TableProductsView extends React.Component {
   };
 
   loadTransactions = () => {
-    this.dataSource= new DataSource(this.context.user.token, this.context.user.store._id)
+    this.dataSource= new DataSource(this.context.token, this.context.store.id)
     this.dataSource.getStoreTransactions().then(v => {
       this.setState({loading: false})
       let orders= v.data.items
@@ -104,7 +105,7 @@ class TableProductsView extends React.Component {
 
 
   componentWillMount() {
-    this.dataSource = new DataSource(this.context.user.token, this.context.user.store._id)
+    this.dataSource = new DataSource(this.context.store.token, this.context.store.id)
     this.loadTransactions()
   }
 
@@ -116,7 +117,7 @@ class TableProductsView extends React.Component {
     this.loadTransactions()
 
   }
-  static contextType= AppContext
+  static contextType= StoreContext
 
   render() {
     let { classes } = this.props;
@@ -134,100 +135,95 @@ class TableProductsView extends React.Component {
 
 
     let selectedCategoriesOptionToolBar = (
-        <React.Fragment>
-          <AppToolBar>
+        <Paper>
+          <Toolbar>
             <div>
               <IconButton><Delete/></IconButton>
               <IconButton><Edit/></IconButton>
               <IconButton><MdGroup/></IconButton>
               <IconButton><FaMailBulk/></IconButton>
             </div>
-            <Typography>Bulk Action</Typography>
-          </AppToolBar>
-        </React.Fragment>
+          </Toolbar>
+        </Paper>
     );
 
     let defaultToolbar = (
-        <React.Fragment>
-          <AppToolBar>
-            <Typography>
+        <Paper style={{background:"rgba(0,0,0,.5)"}}>
+          <Toolbar style={{ display:"flex", justifyContent:"space-between", alignItems:"center"}}>
+            <Typography variant={"h6"}>
               Transactions
             </Typography>
-            <div style={{display:"flex"}}>
-              <div style={{padding:"0px 8px"}}>
+            <div>
+
                 <IconButton>
                   <Refresh/>
                 </IconButton>
-              </div>
-              <div style={{padding:"0px 8px"}}>
-                <ButtonBase style={{padding:"12px"}}
-                            to={"/customer/new"}
+                <Button
+                        variant={"contained"}
+                            to={`/stores/${this.context.store.id}/orders/new-transaction`}
                             component={Link}>
                   <Add/>
-                  <Typography color={"inherit"}> CREATE</Typography>
-                </ButtonBase>
-              </div>
+                  CREATE
+                </Button>
             </div>
-          </AppToolBar>
-        </React.Fragment>
+          </Toolbar>
+        </Paper>
     );
 
     let ordersAvailable = (
         <React.Fragment>
           {transactionMenu}
-          <Paper style={{overflow: "hidden"}}>
+          <div>
             {this.state.selected.length !== 0
                 ? selectedCategoriesOptionToolBar
                 : defaultToolbar}
-            <div style={{overflow: "hidden", overflowX: "auto"}}>
-              <Table style={{ padding: 16, overflowX: "scroll", minWidth: 300 }}>
-                <TableHead>
-                  <TableRow>
-                    <TableCell >
-                      <Checkbox onChange={this.selectAll} />
-                    </TableCell>
-                    <TableCell>Customer</TableCell>
-                    <TableCell>Date</TableCell>
-                    <TableCell>items</TableCell>
-                    <TableCell>status</TableCell>
-                    <TableCell>total</TableCell>
-                    <TableCell>Action</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {this.state.orders.map((v, i) => (
-                      <TableRow>
-                        <TableCell>
-                          <Checkbox
-                              checked={this.state.selected.some(v2=> v2 == v._id)}
-                              onChange={this.selectSingle(v._id)}
-                          />
-                        </TableCell>
-                        <TableCell style={{ }}>
-                            <IconButton>
-                              <FaUserCircle/>
-                            </IconButton>
-                          <span>{v.customer}</span>
-                        </TableCell>
-                        <TableCell>{new Date(v.created+"").getUTCDate()}</TableCell>
-                        <TableCell>
-                          <Chip label={v.items.length}/>
-                        </TableCell>
-                        <TableCell align={"center"}>
-                          <Chip label={"pending"}/>
-                        </TableCell>
-                        <TableCell>
-                          <Chip label={v.total}/>
-                        </TableCell>
-                        <TableCell>
-                          <IconButton onClick={this.openMenu(v)}><MoreHoriz/></IconButton>
-                        </TableCell>
-                      </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </Paper>
+            <Grid container>
+              <Grid item xs={12}>
+                {this.state.orders.map((v, i) => (
+                    <Paper style={{margin:"16px 0px"}} elevation={1}>
+                      <Grid container alignItems={"center"} justify={"space-between"}>
+                        <Grid item md={6}>
+                          <Grid container>
+                            <Grid item>
+                              <Checkbox
+                                  checked={this.state.selected.some(v2=> v2 == v._id)}
+                                  onChange={this.selectSingle(v._id)}
+                              />
+                            </Grid>
+                            <Grid item>
+                              <IconButton>
+                                <FaUserCircle/>
+                              </IconButton>
+                              <span>{v.customer}</span>
+                            </Grid>
+                          </Grid>
+                        </Grid>
+                        <Grid item md={6}>
+                          <Grid container justify={"space-between"} alignItems={"center"}>
+                            <Grid>
+                              <Chip variant={"outlined"} label={"status"} color={"primary"}/>
+                            </Grid>
+                            <Grid item>
+                              {new Date().toDateString()}
+                            </Grid>
+
+                            <Grid item>
+                              <Chip label={v.items.length} variant={"outlined"} color={"primary"}/>
+                            </Grid>
+                            <Grid item>
+                              <Chip label={v.total} variant={"outlined"} icon={<FaDollarSign/>} color={"primary"}/>
+                            </Grid>
+                            <Grid item>
+                              <IconButton color={"primary"}  onClick={this.openMenu(v)}><MoreHoriz/></IconButton>
+                            </Grid>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    </Paper>
+                ))}
+              </Grid>
+            </Grid>
+          </div>
         </React.Fragment>
     );
     let ordersNotAvailable = (
@@ -252,54 +248,6 @@ class TableProductsView extends React.Component {
 }
 
 let WithStylesTableProductsView = withStyles(styles)(TableProductsView);
-class Orders extends React.Component {
-  state = {
-    ui: {
-      create: {
-        anchorEl: null
-      }
-    }
-  };
-  handleCreateButtonOpen = event => {
-    event.persist();
-    this.setState(state => {
-      state.ui.create.anchorEl = event.currentTarget;
-      return state;
-    });
-  };
-  handleCreateButtonClose = () => {
-    this.setState(state => {
-      state.ui.create.anchorEl = null;
-      return state;
-    });
-  };
 
-  static contextType= AppContext
-  render() {
-    let anchorEl = this.state.ui.create.anchorEl;
-    let open = Boolean(anchorEl);
-    let { classes, theme } = this.props;
-    return (
-        <React.Fragment>
-          <PageAppBar>
-            <div>
-              <Typography variant={"title"}>Sales</Typography>
-            </div>
-            <div>
-              <ButtonBase style={{padding:"12px", color:"black"}}
-                          to={"/orders/new-transaction"}
-                          component={Link}>
-                <Add/>
-                <Typography color={""}> CREATE</Typography>
-              </ButtonBase>
-            </div>
-          </PageAppBar>
-          <div style={{ padding:"24px 24px" }}>
-            <TableProductsView />
-          </div>
-        </React.Fragment>
-    );
-  }
-}
 
-export default withStyles(styles)(Orders)
+export default withStyles(styles)(TableProductsView)

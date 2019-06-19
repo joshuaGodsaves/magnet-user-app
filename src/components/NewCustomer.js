@@ -12,8 +12,8 @@ import {
 } from "@material-ui/core"
 import DataSource from "../DataSource"
 import AppContext from "../AppContext"
+import StoreContext from "../activities/store/StoreContext"
 import withStyles from "@material-ui/core/styles/withStyles"
-
 
 let styles = {
     root: {
@@ -32,7 +32,7 @@ let styles = {
 }
 
 class NewCustomerComponent extends  React.Component{
-    static  contextType= AppContext
+    static  contextType= StoreContext
     state= {
         firstName: undefined,
         lastName: undefined,
@@ -49,7 +49,7 @@ class NewCustomerComponent extends  React.Component{
         }
     }
     componentWillMount() {
-        this.dataSource= new DataSource(this.context.user.token, this.context.user.store._id)
+        this.dataSource= new DataSource(this.context.store.token, this.context.store.id)
     }
     save=async ()=>{
         // Validate before your send

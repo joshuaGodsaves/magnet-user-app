@@ -1,31 +1,26 @@
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
-import { Typography, AppBar, Toolbar } from "@material-ui/core";
 import { Switch } from "react-router-dom";
 import { Route } from "react-router-dom";
+import StoreContext from "../StoreContext";
 
 // Pages
 import CategoriesActivity from "./Categories";
 import CategoryActivity from "./Category";
-import Context from "../../AppContext";
-let styles = {};
 
 class Index extends React.Component {
-  constructor(props) {
-    super(props);
-    CategoriesActivity.contextType = Index.contextType;
-    CategoryActivity.contextTyp = Index.contextType;
-  }
+
+  static contextType= StoreContext
   render() {
     return (
       <React.Fragment>
         <Switch>
-          <Route path={"/categories"} exact component={CategoriesActivity} />
-          <Route path={"/categories/:category"} exact component={CategoryActivity} />
+          <Route path={`/stores/${this.context.store.id}/categories`} exact component={CategoriesActivity} />
+          <Route path={`/stores/${this.context.store.id}/categories/:category`} exact component={CategoryActivity} />
         </Switch>
       </React.Fragment>
     );
   }
 }
 
-export default withStyles(styles)(Index);
+export default Index;

@@ -25,17 +25,20 @@ class App extends Component {
     }
 
     loginUser =async (event) => {
-
-        alert("about to loginin")
         this.setState({sentRequest: true})
         let req= await axios.post("http://localhost:5000/api/user/login", {
             email: this.state.email,
             userName: this.state.email,
             password: this.state.password
         })
+
+
+        console.log(req.data)
         this.setState({sentRequest: false})
+
         if(req.data.token){
-            //Logged in
+            alert("ddd")
+            alert(req.data.token)
             console.log("user is loggedin")
             let user= {
                 email: this.state.email,

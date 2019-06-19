@@ -4,7 +4,9 @@ import Grid from "@material-ui/core/Grid";
 import Chip from "@material-ui/core/Chip";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import {CloudUpload as UploadIcon, Link as LinkIcon, SelectAll as SelectIcon} from "@material-ui/icons";
+import {FaMailBulk, FaProductHunt, FaDollarSign, FaTextWidth} from "react-icons/fa";
+
+import {CloudUpload as UploadIcon, Link as LinkIcon, SelectAll as SelectIcon } from "@material-ui/icons";
 import {
     ButtonBase,
     Checkbox,
@@ -26,10 +28,13 @@ import {
     Tab,
     Tabs
 } from "@material-ui/core";
-import ImageSelectionComponent from "../../components/ImageSelectionComponent"
-import PageAppBar from "../../components/ActivityPrimaryAppBar";
-import AppContext from "../../AppContext";
+
+
+import  ImageSelectionComponent from "../../../components/ImageSelectionComponent"
+import PageAppBar from "../../../components/ActivityPrimaryAppBar"
+import StoreContext from "../StoreContext"
 import axios from "axios";
+
 import CKEditor from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
@@ -106,7 +111,7 @@ class Product extends React.Component {
         },
         mainProductObj: {}
     };
-    static contextType = AppContext;
+    static contextType = StoreContext;
     toggleCategoryDialog = () => {
         this.setState(state => {
             state.categoryDialogOpen = !state.categoryDialogOpen;
@@ -119,11 +124,11 @@ class Product extends React.Component {
         let {match: {params}} = this.props
         axios
             .put(
-                `http://localhost:5000/api/store/${this.context.user.store._id}/product/${params.product}`,
+                `http://localhost:5000/api/store/${this.context.store.id}/product/${params.product}`,
                 this.state.product,
                 {
                     headers: {
-                        "X-auth-license": this.context.user.token
+                        "X-auth-license": this.context.store.token
                     }
                 }
             ).then(v => {
@@ -143,10 +148,6 @@ class Product extends React.Component {
     };
 
     watchInput = propName => {
-        // let oldObj= !this.state.isNewProduct
-        //       // if(oldObj){
-        //       //
-        //       // }
         return event => {
             event.persist();
             this.setState(state => {
@@ -165,10 +166,10 @@ class Product extends React.Component {
     loadCategories = () => {
         axios
             .get(
-                `http://localhost:5000/api/store/${this.context.user.store._id}/category`,
+                `http://localhost:5000/api/store/${this.context.store.id}/category`,
                 {
                     headers: {
-                        "X-auth-license": this.context.user.token
+                        "X-auth-license": this.context.store.token
                     }
                 }
             )
@@ -189,7 +190,7 @@ class Product extends React.Component {
         axios
             .post(
                 `http://localhost:5000/api/store/${
-                    this.context.user.store._id
+                    this.context.store.id
                     }/category`,
                 {
                     title: this.state.newCategoryName
@@ -234,22 +235,21 @@ class Product extends React.Component {
         axios
             .post(
                 `http://localhost:5000/api/store/${
-                    this.context.user.store._id
+                    this.context.store.id
                     }/product`,
                 this.state.product,
                 {
                     headers: {
-                        "X-auth-license": this.context.user.token
+                        "X-auth-license": this.context.store.token
                     }
                 }
             ).then(v => {
             console.log(v.data)
         })
-        console.log(this.state.product);
     };
 
     loadProduct = async (productID) => {
-        let product = await axios.get(`http://localhost:5000/api/store/${this.context.user.store._id}/product/${productID}`)
+        let product = await axios.get(`http://localhost:5000/api/store/${this.context.store.id}/product/${productID}`)
         if (product.data) {
             this.setState({product: product.data, mainProductObj: product.data})
             return true
@@ -258,7 +258,6 @@ class Product extends React.Component {
 
     }
 
-    
     componentDidMount() {
         this.loadCategories()
         let {match: {params}} = this.props
@@ -424,8 +423,7 @@ class Product extends React.Component {
                         selectSingle={this.selectMainImage}
                         closeingDrawer={this.closeingMainImageDrawer}/> : ""}
                 {this.state.categoryDialogOpen ? categorySelector : null}
-
-                <Grid container spacing={24}>
+                <Grid container spacing={24} style={{background:"rgba(0,0,0,.5)"}}>
                     <Grid item sm={12} xs={12} md={6}>
                             <Paper  style={{padding: 24}} elevation={1}>
                                 <FormControl fullWidth className={classes.rootFormControls}>
@@ -449,12 +447,14 @@ class Product extends React.Component {
                                              style={{paddingRight: "16px"}}>
                                     <FormLabel>Product cost Price</FormLabel>
                                     <Input onChange={this.watchInput("costPrice")}
+                                           startAdornment={<FaDollarSign/>}
                                            value={product.costPrice}/>
                                 </FormControl>
                                 <FormControl fullWidth className={classes.rootFormControls}
                                              style={{paddingLeft: "16px"}}>
                                     <FormLabel>Product selling price</FormLabel>
                                     <Input onChange={this.watchInput("sellingPrice")}
+                                           startAdornment={<FaDollarSign/>}
                                            value={product.sellingPrice}/>
                                 </FormControl>
                             </Paper>
@@ -509,15 +509,16 @@ class Product extends React.Component {
                         </Paper>
                         <Divider/>
                         <Typography className={classes.ymargin}> Core Options</Typography>
-                        <Paper style={{padding: 24, background: "white"}} className={classes.ymargin}>>
-                            <Typography variant={"caption"}>Category</Typography>
-                            <Typography>
-                                {this.state.product.category
-                                    ? this.state.product.category
-                                    : "Select Category"}
-                            </Typography>
-                        </Paper>
                         <Paper className={classes.ymargin} style={{padding: 24}}>
+                            <div style={{margin:"16px 0px"}}>
+                                <Typography variant={"caption"}>Category</Typography>
+                                <Typography>
+                                    {this.state.product.category
+                                        ? this.state.product.category
+                                        : "Select Category"}
+                                </Typography>
+                            </div>
+
                             <Button
                                 fullWidth
                                 variant={"contained"}
@@ -590,11 +591,12 @@ class Product extends React.Component {
                     </Tabs>
                     <div>
                         <Button
+                            variant={"contained"}
                             onClick={this.state.isNewProduct ? this.save : this.updateProduct}>{this.state.isNewProduct ? "Save" : "Update"}</Button>
                     </div>
                 </PageAppBar>
-                <Grid container style={{padding: "24px 24px"}} justify={"center"}>
-                    <Grid item sm={10} xs={12}>
+                <Grid container style={{padding: "12px 12px"}} justify={"center"}>
+                    <Grid item xs={12}  sm={10} md={12} >
                     {this.state.currentTab == 0 && primaryComponent}
                     {this.state.currentTab == 1 && visualComponent}
                     </Grid>

@@ -3,10 +3,10 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography";
 import {Add, Collections as Group, Delete, Edit, MoreHoriz} from "@material-ui/icons";
 import {Link} from "react-router-dom";
-import AppContext from "../../AppContext"
+import StoreContext from "../StoreContext"
 import {FaUserCircle,FaMailBulk} from "react-icons/fa"
 import {MdNotifications, MdDelete, MdGroupAdd, MdGroup} from "react-icons/md"
-import {
+import { Toolbar,
   Avatar,
     Card, CardActions, CardHeader, CardContent, Divider, CardActionArea,
   ButtonBase,
@@ -23,10 +23,10 @@ import {
   TableHead,
   TableRow
 } from "@material-ui/core";
-import PageAppBar from "../../components/ActivityPrimaryAppBar";
-import AppToolBar from "../../components/AppToolBar"
-import DataSource from "../../DataSource"
-import NewCustomer from "../../components/NewCustomer"
+import PageAppBar from "../../../components/ActivityPrimaryAppBar";
+import AppToolBar from "../../../components/AppToolBar"
+import DataSource from "../../../DataSource"
+import NewCustomer from "../../../components/NewCustomer"
 
 let styles = {
   ProductItemRoot: {
@@ -51,7 +51,13 @@ class TableProductsView extends React.Component {
     loaded: false,
     selected: [],
     customers: [],
-    activeCustomer: undefined
+    activeCustomer: undefined,
+    addedCustomer: false,
+    ui: {
+      create: {
+        anchorEl: null
+      }
+    }
   };
   selectAll = (event, checked) => {
     if (checked) {
@@ -96,10 +102,10 @@ class TableProductsView extends React.Component {
   }
 
   componentWillMount(){
-    this.dataSource= new DataSource(this.context.user.token, this.context.user.store._id)
+    this.dataSource= new DataSource(this.context.store.token, this.context.store.id)
     this.loadCustomers()
   }
-  static contextType= AppContext
+  static contextType= StoreContext
 
 
   openMenu = (customer) => {
@@ -115,7 +121,17 @@ class TableProductsView extends React.Component {
     this.setState({anchorEl: null})
   }
 
+  finishNewCustomer= (check)=>{
+    if(check){
+      this.setState({addedCustomer: true})
+    }else{
+    }
+    this.setState({createCustomerDrawer: false})
 
+  }
+  openCreateCustomer= ()=>{
+    this.setState({createCustomerDrawer: true})
+  }
 
   render() {
     let { classes } = this.props;
@@ -125,7 +141,7 @@ class TableProductsView extends React.Component {
     let customerMenu = (
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} id="simple-menu" onClose={this.closeMenu}>
           <MenuItem onClick={this.closeMenu} component={Link}
-                    to={`/customers/${activeCustomer ? activeCustomer._id : "undefined"}`}>View</MenuItem>
+                    to={`/stores/${this.context.store.id}/customers/${activeCustomer ? activeCustomer._id : "undefined"}`}>View</MenuItem>
           <MenuItem onClick={this.closeMenu}>Delete</MenuItem>
           <MenuItem onClick={this.closeMenu}>Reach</MenuItem>
         </Menu>
@@ -133,8 +149,7 @@ class TableProductsView extends React.Component {
 
     let selectedCategoriesOptionToolBar = (
         <React.Fragment>
-          <AppToolBar>
-
+          <Toolbar>
             <div>
               <IconButton><Delete/></IconButton>
               <IconButton><Edit/></IconButton>
@@ -143,27 +158,23 @@ class TableProductsView extends React.Component {
             </div>
             <Typography>Bulk Action</Typography>
 
-          </AppToolBar>
+          </Toolbar>
         </React.Fragment>
     );
 
     let defaultToolbar = (
         <React.Fragment>
-          <AppToolBar>
-            <Typography>
-              Store Customer
-            </Typography>
-            <div style={{display:"flex"}}>
-              <div style={{padding:"0px 8px"}}>
-                <ButtonBase style={{padding:"12px"}}
-                            to={"/categories/new"}
-                            component={Link}>
-                  <Add/>
-                  <Typography color={"inherit"}> CREATE</Typography>
-                </ButtonBase>
-              </div>
+          <PageAppBar>
+            <div>
+              <Typography variant={"title"}>Customers</Typography>
             </div>
-          </AppToolBar>
+            <div>
+              <ButtonBase style={{padding:"12px", color:"black"}} onClick={this.openCreateCustomer}>
+                <Add/>
+                <Typography color={""}> CREATE</Typography>
+              </ButtonBase>
+            </div>
+          </PageAppBar>
         </React.Fragment>
     );
 
@@ -213,6 +224,8 @@ class TableProductsView extends React.Component {
     return (
         <React.Fragment>
           {customerMenu}
+          {this.state.createCustomerDrawer? <NewCustomer open= {this.state.createCustomerDrawer} onFinish={this.finishNewCustomer}/>: null}
+
           {this.state.loading? <LinearProgress/> :
               <div>
             {this.state.customers.length == 0
@@ -224,54 +237,7 @@ class TableProductsView extends React.Component {
     );
   }
 }
+
 let WithStylesTableProductsView = withStyles(styles)(TableProductsView);
 
-
-class Products extends React.Component {
-  state = {
-    addedCustomer: false,
-    ui: {
-      create: {
-        anchorEl: null
-      }
-    }
-  };
-  static contextType= AppContext
-  finishNewCustomer= (check)=>{
-    if(check){
-      this.setState({addedCustomer: true})
-    }else{
-    }
-    this.setState({createCustomerDrawer: false})
-
-  }
-  openCreateCustomer= ()=>{
-    this.setState({createCustomerDrawer: true})
-  }
-  render() {
-    let anchorEl = this.state.ui.create.anchorEl;
-    let open = Boolean(anchorEl);
-    let { classes, theme } = this.props;
-    return (
-        <React.Fragment>
-          {this.state.createCustomerDrawer? <NewCustomer open= {this.state.createCustomerDrawer} onFinish={this.finishNewCustomer}/>: null}
-          <PageAppBar>
-            <div>
-              <Typography variant={"title"}>Customers</Typography>
-            </div>
-            <div>
-              <ButtonBase style={{padding:"12px", color:"black"}} onClick={this.openCreateCustomer}>
-                <Add/>
-                <Typography color={""}> CREATE</Typography>
-              </ButtonBase>
-            </div>
-          </PageAppBar>
-          <div style={{ padding:"24px 24px" }}>
-            <TableProductsView reloadCustomers/>
-          </div>
-        </React.Fragment>
-    );
-  }
-}
-
-export default withStyles(styles)(Products)
+export default withStyles(styles)(TableProductsView)

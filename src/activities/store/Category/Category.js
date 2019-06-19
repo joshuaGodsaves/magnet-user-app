@@ -17,16 +17,16 @@ import {
   Tab, Divider,
   Tabs, IconButton
 } from "@material-ui/core";
-import PageAppBar from "../../components/ActivityPrimaryAppBar";
+import PageAppBar from "../../../components/ActivityPrimaryAppBar";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import ListItem from "@material-ui/core/ListItem";
 import CKEditor from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import ImageSelectionComponent from "../../components/ImageSelectionComponent"
+import ImageSelectionComponent from "../../../components/ImageSelectionComponent"
 import {CloudUpload as UploadIcon, Link as LinkIcon, SelectAll as SelectIcon} from "@material-ui/icons";
 import axios from "axios";
-import AppContext from "../../AppContext";
+import StoreContext from "../StoreContext";
 
 let styles = {
   listItem: {
@@ -62,7 +62,7 @@ let styles = {
 };
 
 class Category extends React.Component {
-  static contextType = AppContext;
+  static contextType = StoreContext;
   state = {
     currentTab: 0,
     categoryDialogOpen: false,
@@ -99,7 +99,7 @@ class Category extends React.Component {
     let {match: {params}} = this.props
     axios
         .put(
-            `http://localhost:5000/api/store/${this.context.user.store._id}/category/${params.category}`,
+            `http://localhost:5000/api/store/${this.context.store.id}/category/${params.category}`,
             this.state.category,
             {
               headers: {
@@ -131,7 +131,7 @@ class Category extends React.Component {
 
   loadCategory = async (catID) => {
     let category;
-      category = await axios.get(`http://localhost:5000/api/store/${this.context.user.store._id}/category/${catID}`)
+      category = await axios.get(`http://localhost:5000/api/store/${this.context.store.id}/category/${catID}`)
 
     if(!category){
       console.log("error")
@@ -162,11 +162,11 @@ class Category extends React.Component {
     }
   }
   save =async  ()=>{
-    let category = await axios.post(`http://localhost:5000/api/store/${this.context.user.store._id}/category`,
+    let category = await axios.post(`http://localhost:5000/api/store/${this.context.store.id}/category`,
         this.state.category,
         {
           headers: {
-            "X-auth-license": this.context.user.token
+            "X-auth-license": this.context.store.token
           }
         })}
 

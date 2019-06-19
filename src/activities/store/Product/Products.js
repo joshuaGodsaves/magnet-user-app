@@ -1,12 +1,12 @@
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography";
-import {Add, Delete, Edit, MoreHoriz} from "@material-ui/icons";
+import {Add, Delete, Edit, MoreHoriz, SearchRounded} from "@material-ui/icons";
 import {Link} from "react-router-dom";
-import AppContext from "../../AppContext"
+import AppContext from "../StoreContext"
 import {
-  Avatar,
-  ButtonBase,
+  Avatar, Toolbar,
+  Button,
   Checkbox,
   Chip,
   IconButton,
@@ -22,12 +22,15 @@ import {
   TableHead,
   TableRow
 } from "@material-ui/core";
-import PageAppBar from "../../components/ActivityPrimaryAppBar";
-import AppToolBar from "../../components/AppToolBar"
-import DataSource from "../../DataSource"
+
+import PageAppBar from "../../../components/ActivityPrimaryAppBar";
+import AppToolBar from "../../../components/AppToolBar"
+import DataSource from "../../../DataSource"
+
 import {MdGroup, MdCollections, MdRefresh} from "react-icons/md";
-import {GiMeepleGroup} from "react-icons/gi"
-import {FaMailBulk, FaProductHunt} from "react-icons/fa";
+import {FaMailBulk, FaProductHunt, FaDollarSign} from "react-icons/fa";
+
+import Products from "../Category/Categories";
 
 let styles = {
   ProductItemRoot: {
@@ -91,10 +94,8 @@ class TableProductsView extends React.Component {
 
   componentWillMount() {
 
-    this.dataSource = new DataSource(this.context.user.token, this.context.user.store._id)
-
+    this.dataSource = new DataSource(this.context.store.token, this.context.store.id)
     this.loadProducts()
-
   }
 
   static contextType= AppContext
@@ -125,7 +126,7 @@ class TableProductsView extends React.Component {
     let productMenu = (
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} id="simple-menu" onClose={this.closeMenu}>
           <MenuItem onClick={this.closeMenu}
-                    component={Link} to={`/products/${activeProduct ? activeProduct._id : undefined}`}>View</MenuItem>
+                    component={Link} to={`/stores/${this.context.store.id}/products/${activeProduct ? activeProduct._id : undefined}`}>View</MenuItem>
           <MenuItem onClick={this.deleteProduct}>Delete</MenuItem>
           <MenuItem>Mute</MenuItem>
         </Menu>
@@ -145,83 +146,92 @@ class TableProductsView extends React.Component {
 
     let defaultToolbar = (
       <React.Fragment>
-        <AppToolBar>
-          <Grid container alignContent={"center"} alignItems={"center"}>
-            <Typography>
-              Products
-            </Typography>
-            <IconButton>
-              <MdRefresh/>
-            </IconButton>
+          <Grid container alignContent={"center"} alignItems={"center"} justify={"space-between"}>
+            <Grid item>
+              <Grid container alignItems={"center"}>
+                <Typography variant={"h6"}>
+                  Products
+                </Typography>
+              </Grid>
+            </Grid>
 
-          </Grid>
-            <div style={{display:"flex"}}>
-              <div style={{padding:"0px 8px"}}>
-                <ButtonBase style={{padding:"12px"}}
-                            to={"/products/product"}
-                            component={Link}>
-                  <Add/>
-                  <Typography color={"inherit"}> CREATE</Typography>
-                </ButtonBase>
+            <Grid item sm={6}>
+              <Paper style={{overflow:"hidden", position:'relative', padding:"0px 0px", background:"rgba(0,0,0,.5)"}} elevation={0}>
+                <InputBase style={{ padding:'4px 8px', position:'relative', width:"100%"}}
+                startAdornment={<SearchRounded/>}/>
+              </Paper>
+            </Grid>
+
+            <Grid item>
+                <div>
+                  <Button to={"/products/product"} component={Link} variant={"contained"} size={"large"}>
+                    <Add/>
+                    <Typography color={"inherit"}>CREATE</Typography>
+                  </Button>
                 </div>
-            </div>
-        </AppToolBar>
+            </Grid>
+          </Grid>
+
       </React.Fragment>
     );
 
     let productsAvailable = (
       <React.Fragment>
-        {productMenu}
-        <Paper style={{ overflow: "hidden", background:"ghostwhite" }} >
-          {this.state.selected.length !== 0
-            ? selectedProductOptionToolBar
-            : defaultToolbar}
-          <div style={{overflow: "hidden:", overflowX: "auto"}}>
-            <Table style={{padding: 16, overflowX: "scroll", minWidth: 300}}>
-              <TableHead>
-                <TableRow>
-                  <TableCell>
-                    <Checkbox onChange={this.selectAll}/>
-                  </TableCell>
-                  <TableCell>Date</TableCell>
-                  <TableCell>Image</TableCell>
-                  <TableCell>title</TableCell>
-                  <TableCell>category</TableCell>
-                  <TableCell>price</TableCell>
-                  <TableCell>Action</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {this.state.products.map((product, i) => (
-                    <TableRow>
-                      <TableCell>
-                        <Checkbox
-                            checked={this.state.selected.some(v2 => v2 == product._id)}
-                            onChange={this.selectSingle(product._id)}
-                        />
-                      </TableCell>
-                      <TableCell>{new Date(product.created + "").getUTCDate()}</TableCell>
-                      <TableCell>
-                        <IconButton>
-                          <FaProductHunt/>
-                        </IconButton>
-                      </TableCell>
-                      <TableCell>{product.title}</TableCell>
-                      <TableCell>
-                        <div>
-                          <Chip label={product.categories[0]}/>
-                        </div>
-                      </TableCell>
-                      <TableCell>{product.sellingPrice}</TableCell>
-                      <TableCell><IconButton onClick={this.openMenu(product)}><MoreHoriz/></IconButton></TableCell>
-                    </TableRow>
+          {productMenu}
+        <Toolbar style={{marin:"16px 0px"}}>
+          {defaultToolbar}
+        </Toolbar>
+        <Grid container>
+          <Grid item xs={12}>
+            {this.state.products.map((product, i) => (
+                <Paper style={{margin:"16px 0px"}} elevation={1}>
+                  <Grid container alignItems={"center"} justify={"space-between"}>
+                    <Grid item md={6}>
+                      <Grid container>
+                        <Grid item>
+                          <Checkbox
+                              color={"primary"}
+                              checked={this.state.selected.some(v2 => v2 == product._id)}
+                              onChange={this.selectSingle(product._id)}
+                          />
+                        </Grid>
+                        <Grid item>
+                          <IconButton>
+                            <FaProductHunt/>
+                          </IconButton>
+                          {"product.title product heere"}
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                    <Grid item md={6}>
+                      <Grid container justify={"space-between"} alignItems={"center"}>
+                        <Grid>
+                          <Chip variant={"outlined"} label={"avail"} color={"primary"}/>
+                        </Grid>
+                        <Grid item>
+                          {new Date().toDateString()}
+                        </Grid>
+                        <Grid item>
+                          <div>
+                            <Chip label={product.categories[0]} color={"primary"}/>
+                          </div>
+                        </Grid>
+                        <Grid item>
+                          <Chip label={product.sellingPrice || "$00.00"} variant={"outlined"} icon={<FaDollarSign/>} color={"primary"}/>
+                        </Grid>
+                        <Grid item>
+                          <IconButton color={"primary"}  onClick={this.openMenu(product)}><MoreHoriz/></IconButton>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Paper>
                 ))}
-              </TableBody>
-            </Table>
-          </div>
-        </Paper>
+          </Grid>
+        </Grid>
       </React.Fragment>
     );
+
     let productsNotAvailable = (
       <div>
         <Typography align={"center"}>
@@ -244,57 +254,5 @@ class TableProductsView extends React.Component {
   }
 }
 let WithStylesTableProductsView = withStyles(styles)(TableProductsView);
-class Products extends React.Component {
-  state = {
-    ui: {
-      create: {
-        anchorEl: null
-      }
-    }
-  };
-  handleCreateButtonOpen = event => {
-    event.persist();
-    this.setState(state => {
-      state.ui.create.anchorEl = event.currentTarget;
-      return state;
-    });
-  };
-  handleCreateButtonClose = () => {
-    this.setState(state => {
-      state.ui.create.anchorEl = null;
-      return state;
-    });
-  };
 
-  static contextType= AppContext
-  render() {
-    let anchorEl = this.state.ui.create.anchorEl;
-    let open = Boolean(anchorEl);
-    let { classes, theme } = this.props;
-    console.log("from products")
-    console.log( this.context)
-    return (
-      <React.Fragment>
-                <PageAppBar>
-                  <div>
-                    <Typography variant={"title"}> Products</Typography>
-                  </div>
-                  <div>
-                    <ButtonBase style={{padding:"12px", color:"black"}}
-                                to={"/products/new"}
-                                component={Link}>
-                      <Add/>
-                      <Typography color={""}> CREATE</Typography>
-                    </ButtonBase>
-                  </div>
-                </PageAppBar>
-                <div style={{ padding:"24px 24px" }}>
-                  <TableProductsView />
-                </div>
-      </React.Fragment>
-    );
-  }
-}
-
-
-export default withStyles(styles)(Products)
+export default withStyles(styles)(TableProductsView)

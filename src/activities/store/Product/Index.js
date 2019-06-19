@@ -6,23 +6,21 @@ import { Route } from "react-router-dom";
 // Pages
 import ProductsActivity from "./Products";
 import ProductActivity from "./Product";
-import AppContext from "../../AppContext";
+import StoreContext from "../StoreContext";
 
 let styles = {};
-
 
 class Index extends React.Component {
   constructor(props) {
     super(props);
   }
-  
-  static contextType= AppContext
+  static contextType= StoreContext
   render() {
     return (
       <React.Fragment>
         <Switch>
-          <Route path={"/products"} exact  component={ProductsActivity}/>
-          <Route path={"/products/:product"} exact component={ProductActivity} />
+          <Route path={`/stores/${this.context.store.id}/products`} exact  component={ProductsActivity}/>
+          <Route path={`/stores/${this.context.store.id}/products/:product`} exact component={ProductActivity} />
         </Switch>
       </React.Fragment>
     );

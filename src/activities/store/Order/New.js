@@ -1,6 +1,6 @@
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
-import AppToolBar from "../../components/AppToolBar"
+import AppToolBar from "../../../components/AppToolBar"
 import User from "@material-ui/icons/SupervisedUserCircle"
 import {
     Button,
@@ -26,8 +26,8 @@ import {
     TableRow,
     Typography
 } from "@material-ui/core";
-import DataSource from "../../DataSource"
-import AppContext from "../../AppContext"
+import DataSource from "../../../DataSource"
+import StoreContext from "../StoreContext"
 
 let styles = {
     dialogActions: {
@@ -45,7 +45,7 @@ let styles = {
 
 class CreateTransaction extends React.Component {
 
-    static contextType = AppContext
+    static contextType = StoreContext
     state = {
         customers: [],
         customerDialog: false,
@@ -179,13 +179,11 @@ class CreateTransaction extends React.Component {
             items: items,
             total: total
         })
-
         console.log(result)
-
     }
 
     componentDidMount() {
-        this.dataSource = new DataSource(this.context.user.token, this.context.user.store._id)
+        this.dataSource = new DataSource(this.context.store.token, this.context.store.id)
         this.loadCustomers()
         this.loadProducts()
     }
