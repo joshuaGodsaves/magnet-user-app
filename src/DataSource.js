@@ -1,10 +1,23 @@
 import axios from "axios"
 
-const API_URL= `localhost:5000/api/store`
+ let API_URL= `http://localhost:5000/api`
+
+if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+    // dev code
+} else {
+    // production code
+    API_URL= "https://api-dot-lubi-ep.appspot.com/api"
+}
+
+/*
+API_URL= "https://api-dot-lubi-ep.appspot.com/api"
+*/
+
+export const APIURL= API_URL
 
 export default class DataSource {
     constructor(accessToken, storeId) {
-        this.API_URL = `http://localhost:5000/api/store`
+        this.API_URL = `${API_URL}/store`
         this.storeId = storeId
         this.axios = axios.create({
             headers: {
@@ -12,6 +25,7 @@ export default class DataSource {
             }
         })
     }
+
     async getStoreCategories() {
         let categories = await this.axios.get(`${this.API_URL}/${this.storeId}/category`)
         return categories;
@@ -21,8 +35,6 @@ export default class DataSource {
         let sections = await this.axios.get(`${this.API_URL}/${this.storeId}/section`)
         return sections;
     }
-
-
 
     async getStoreCategory(id) {
         let category = await this.axios.get(`${this.API_URL}/${this.storeId}/category/${id}`)
@@ -103,7 +115,7 @@ export default class DataSource {
     }
 
     async createEPCustomer(data) {
-        let result = await this.axios.post(`http://localhost:5000/api/user`, data)
+        let result = await this.axios.post(`${API_URL}/user`, data)
         if (result) {
             return result.data
         } else {
@@ -112,7 +124,7 @@ export default class DataSource {
     }
 
     async getUser(id) {
-        let result = await this.axios.get(`http://localhost:5000/api/user/${id}`)
+        let result = await this.axios.get(`${API_URL}/user/${id}`)
         if (result) {
             return result
         } else {

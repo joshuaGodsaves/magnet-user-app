@@ -186,9 +186,9 @@ class TableProductsView extends React.Component {
                 : defaultToolbar}
             </Paper>
           {/*<Checkbox onChange={this.selectAll} />*/}
-                <Grid container style={{margin:"24px 0"}} spacing={16} justify={"flex-start"}>
+                <Grid container style={{margin:"24px 0"}} justify={"flex-start"}>
                   {this.state.customers.map((customer, i) => (
-                  <Grid item>
+                  <Grid item style={{margin: 8}}>
                     <Card style={{width:230, background:"ghostwhite", minHeight:100}}>
                       <Grid container justify={"space-between"}   alignContent={"center"}  alignItems={"center"}>
                           <Checkbox

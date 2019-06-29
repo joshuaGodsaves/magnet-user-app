@@ -6,9 +6,10 @@ import {
     Button, Paper, Avatar, ExpansionPanel, ExpansionPanelSummary,
     ExpansionPanelActions, ExpansionPanelDetails, IconButton, Card, CardContent, Divider, CardActions
 } from "@material-ui/core"
-import {} from "react-icons/fa"
+import rechart, {LineChart, Tooltip, CartesianGrid,Line, XAxis} from "recharts"
+
+
 import {ArrowDownward, ArrowDropDown, SupervisedUserCircle, NotificationImportantOutlined, NewReleasesOutlined} from "@material-ui/icons"
-import {Switch, Link, Route} from "react-router-dom";
 
 let drawerWidth = 220;
 
@@ -39,11 +40,20 @@ class App extends Component {
                 <Grid container spacing={8}>
                     <Grid item md={12}>
                         <Paper style={{padding: 24}}>
-                            <Avatar/>
-                            <Typography> User Name</Typography>
+                            <LineChart
+                                width={400}
+                                height={400}
+                                data={{uv:100, px:20}}
+                                margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+                            >
+                                <XAxis dataKey="name" />
+                                <Tooltip />
+                                <CartesianGrid stroke="#f5f5f5" />
+                                <Line type="monotone" dataKey="uv" stroke="#ff7300" yAxisId={0} />
+                                <Line type="monotone" dataKey="pv" stroke="#387908" yAxisId={10} />
+                            </LineChart>
                         </Paper>
                     </Grid>
-
                     <Grid item md={6}>
                         <Card>
                             <CardContent style={{ padding: 0}}>

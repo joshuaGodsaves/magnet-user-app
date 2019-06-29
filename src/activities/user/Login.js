@@ -4,7 +4,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import {Grid, Typography, AppBar, Paper, Button, FormControl, FormLabel, FormHelperText, OutlinedInput} from "@material-ui/core"
 import {VerifiedUserOutlined,  SupervisedUserCircle} from "@material-ui/icons";
 import axios from "axios";
-
+import { APIURL } from './../../DataSource';
 let drawerWidth = 220;
 let styles = theme => ({
     drawerPaper: {
@@ -26,14 +26,12 @@ class App extends Component {
 
     loginUser =async (event) => {
         this.setState({sentRequest: true})
-        let req= await axios.post("http://localhost:5000/api/user/login", {
+        let req= await axios.post(`${APIURL}/user/login`, {
             email: this.state.email,
             userName: this.state.email,
             password: this.state.password
         })
 
-
-        console.log(req.data)
         this.setState({sentRequest: false})
 
         if(req.data.token){
@@ -44,9 +42,11 @@ class App extends Component {
                 email: this.state.email,
                 token: req.data.token
             }
+            
             window.localStorage.setItem("magnet-client-active-user", JSON.stringify(user))
             window.location.replace(window.location.host)
         }
+
     };
 
     watch= (prop)=>{

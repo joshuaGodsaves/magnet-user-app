@@ -12,6 +12,8 @@ import orderIndex from "./Order/Index"
 import sectionIndex from "./Section/Index"
 import categoryIndex from "./Category/Index"
 import customerIndex from "./Customer/Index"
+import settings from "./Settings"
+
 let drawerWidth = 220;
 
 let styles = theme => ({
@@ -95,6 +97,7 @@ class App extends Component {
                                     <Route path={`/stores/${this.state.activeStore}/categories` }   component={categoryIndex}/>
                                     <Route path={`/stores/${this.state.activeStore}/customers` }   component={customerIndex}/>
                                     <Route path={`/stores/${this.state.activeStore}/sections` }   component={sectionIndex}/>
+                                    <Route path={`/stores/${this.state.activeStore}/settings` }   component={settings}/>
                                 </Switch>
                             </Grid>
                         </Grid>

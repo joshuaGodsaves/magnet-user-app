@@ -7,6 +7,8 @@ import {Menu as MenuIcon, ArrowDropDown as ArrowDropDownIcon, MoreHoriz, Search,
 import axios from "axios"
 import AppContext from "../AppContext";
 import Typography from "@material-ui/core/Typography";
+
+import { APIURL } from './../DataSource';
 let styles = theme => ({
 
 });
@@ -44,7 +46,7 @@ class App extends Component {
 
     componentWillMount() {
         let email= this.context.user.email
-        axios.get(`http://localhost:5000/api/user/${email}/stores`).then(v=>{
+        axios.get(`${APIURL}user/${email}/stores`).then(v=>{
             this.setState({stores: v.data})
         }).catch(v=>{
             console.log(v)

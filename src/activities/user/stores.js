@@ -10,7 +10,7 @@ import {ArrowDownward, ArrowDropDown} from "@material-ui/icons"
 import {Switch, Link, Route} from "react-router-dom";
 import AppContex from "../../AppContext"
 import axios from "axios"
-
+import { APIURL } from './../../DataSource';
 let drawerWidth = 220;
 
 let styles = theme => ({
@@ -34,8 +34,10 @@ class App extends Component {
 
         ]
     }
+    
     componentWillMount() {
-        axios.get(`http://localhost:5000/api/user/${this.context.user.email}/stores`).then(v=>{
+        axios.get(`${APIURL}/user/${this.context.user.email}/stores`).then(v=>{
+            alert(v.data[0])
             this.setState({stores: v.data})
         })
     }

@@ -28,6 +28,8 @@ import axios from "axios";
 import Grid from "@material-ui/core/Grid";
 import Uploader from "./DynamicUploadHandler";
 import StoreContext from '../activities/store/StoreContext'
+import {APIURL} from "../DataSource"
+
 
 let styles = {
   root: {
@@ -43,124 +45,6 @@ let styles = {
     width: "100%"
   }
 };
-
-class UploadImageDialog extends React.Component {
-    static contextType = StoreContext
-  state = {
-      open: true,
-      url: "",
-      file: undefined,
-      uploading: false,
-      uploaded: false
-  };
-  uploadTracker = () => {
-    let uploadElement = window.document.getElementById("uploadElement");
-    uploadElement.click();
-  };
-
-  handleUploadElementChange = e => {
-    e.persist();
-    this.setState({ file: e.currentTarget.files[0] });
-    this.handleUpload()
-  };
-
-  handleUpload = async () => {
-    let data = new FormData();
-    data.append("file",this.state.file);
-    let result=axios.post(`http://localhost:5000/api/store/${this.context.store.id}/upload`, data, {
-      headers:{
-        "X-auth-license": this.context.store.token
-      }
-    })
-
-      this.setState({uploading: true, open:false})
-    result.then(val=>{
-      console.log( val.data )
-        this.setState({uploading: false, uploaded: true})
-        setTimeout(()=>{
-            this.props.closingDialog()
-        }, 3000)
-    })
-  };
-  close= ()=>{
-      this.props.closingDialog()
-  }
-  render() {
-
-      let uploadingMessage= (
-          <Snackbar open autoHideDuration={3000} resumeHideDuration >
-              <SnackbarContent message={"Image is uploading"}>
-              </SnackbarContent>
-          </Snackbar>
-      )
-      let uploadedMessage= (
-          <Snackbar open  autoHideDuration={3000} resumeHideDuration>
-              <SnackbarContent message={"Image has been uploaded successfully"}>
-              </SnackbarContent>
-          </Snackbar>
-      )
-    return (
-      <React.Fragment>
-        <Dialog open={this.state.open} maxWidth={"xs"} fullWidth style={{zIndex:40000}}>
-            <DialogTitle>
-                <Typography variant={"h6"}> Upload Image</Typography>
-            </DialogTitle>
-            <Divider/>
-           <DialogContent>
-               <Typography variant={"caption"} style={{ textAlign: "center" }}>
-                   Simple details about image upload{" "}
-               </Typography>
-               <div
-                   style={{
-                       width: "200px",
-                       height: 200,
-                       background: "rgba(10,10,10,.5)",
-                       margin: "16px auto",
-                       padding: 16
-                   }}
-               />
-               <div
-                   style={{
-                       padding: 16,
-                       position: "relative",
-                       width: "200px",
-                       margin: "32px auto"
-                   }}
-               >
-                   <ButtonBase
-                       onClick={this.uploadTracker}
-                       style={{
-                           display: "flex",
-                           justifyContent: "center",
-                           position: "absolute",
-                           height: "100%",
-                           width: "100%",
-                           zIndex: 300000,
-                           background: "pink",
-                           top: 0,
-                           left: 0
-                       }}
-                   >
-                       <CloudUploadSharp style={{ margin: "0px 16px" }} />
-                       <div style={{ margin: "0px 16px" }}>Upload</div>
-                   </ButtonBase>
-                   <input
-                       type={"file"}
-                       id={"uploadElement"}
-                       onChange={this.handleUploadElementChange}
-                   />
-               </div>
-           </DialogContent>
-            <DialogActions style={{display:"flex", justifyContent:"flex-end"}}>
-                <Button  onClick={this.close}>Cancel</Button>
-            </DialogActions>
-        </Dialog>
-          {this.state.uploading?  uploadingMessage : ""}
-          {this.state.uploaded?  uploadedMessage : ""}
-      </React.Fragment>
-    );
-  }
-}
 
 class Component extends React.Component {
  static contextType = StoreContext;
@@ -190,30 +74,6 @@ class Component extends React.Component {
   closeDrawer = () => {
       this.props.closeingDrawer()
     this.setState({ open: false });
-  };
-
-  getResources = () => {
-    axios
-      .get("https://api.pexels.com/v1/search", {
-        params: {
-          query: this.state.query
-        },
-        headers: {
-          Authorization:
-            "563492ad6f91700001000001a98eefa89e00425daa33c7549ea0553f"
-        }
-      })
-      .then(val => {
-        console.log(val);
-        this.setState(state => {
-          state.externalResources= val.data.photos;
-          return state;
-        });
-      })
-      .catch(v => {
-        if (v) {
-        }
-      });
   };
 
   getStoreResources= ()=>{
@@ -275,7 +135,6 @@ class Component extends React.Component {
     handleQueryChange = event => {
     event.persist();
     this.setState({ query: event.currentTarget.value });
-    this.getResources();
   };
   previousPageExternal = () => {};
   nextPageExternal = () => {};
@@ -384,9 +243,8 @@ class Component extends React.Component {
         >
           <Toolbar position={"relative"} className={classes.appRoot}>
             <div>
-              <Tabs value={0} variant={"scrollable"}>
+              <Tabs value={this.state.currentTab} variant={"scrollable"}>
                 <Tab label={"Uploads"}  style={{color:'#404040'}}/>
-                <Tab label={"External"}   style={{color:'#404040'}} disabled/>
                 <Tab label={"Selected"}   style={{color:'#404040'}} disabled/>
               </Tabs>
             </div>
@@ -405,8 +263,6 @@ class Component extends React.Component {
               </IconButton>
             </div>
           </Toolbar>
-          {this.state.uploadAsset ? <UploadImageDialog closingDialog={ this.closingUploadDialog }/>: ""}
-          {this.state.currentTab == 1 && externalComponentView}
           {this.state.currentTab == 0 && uploadsComponentView}
         </Drawer>
       </React.Fragment>

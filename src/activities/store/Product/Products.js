@@ -132,59 +132,60 @@ class TableProductsView extends React.Component {
         </Menu>
     )
     let selectedProductOptionToolBar = (
-      <React.Fragment>
-        <AppToolBar>
-          <div>
-          <IconButton><Delete/></IconButton>
-          <IconButton><Edit/></IconButton>
-        </div>
-        <Typography>Bulk Action</Typography>
-
-      </AppToolBar>
-      </React.Fragment>
+        <Paper>
+          <Toolbar>
+            <div>
+              <IconButton><Delete/></IconButton>
+              <IconButton><Edit/></IconButton>
+            </div>
+            <Typography>Bulk Action</Typography>
+          </Toolbar>
+        </Paper>
     );
 
     let defaultToolbar = (
-      <React.Fragment>
-          <Grid container alignContent={"center"} alignItems={"center"} justify={"space-between"}>
-            <Grid item>
-              <Grid container alignItems={"center"}>
-                <Typography variant={"h6"}>
-                  Products
-                </Typography>
+        <Paper>
+          <Toolbar>
+              <Grid container alignContent={"center"} alignItems={"center"} justify={"space-between"}>
+                <Grid item>
+                  <Grid container alignItems={"center"}>
+                    <Typography variant={"h6"}>
+                      Products
+                    </Typography>
+                  </Grid>
+                </Grid>
+
+                <Grid item sm={6}>
+                  <Paper style={{overflow:"hidden", position:'relative', padding:"0px 0px", background:"rgba(0,0,0,.5)"}} elevation={0}>
+                    <InputBase style={{ padding:'4px 8px', position:'relative', width:"100%"}}
+                    startAdornment={<SearchRounded/>}/>
+                  </Paper>
+                </Grid>
+                <Grid item>
+                    <div>
+                      <Button to={`/stores/${this.context.store.id}/products/new`} component={Link} variant={"contained"} size={"large"}>
+                        <Add/>
+                        <Typography color={"inherit"}>CREATE</Typography>
+                      </Button>
+                    </div>
+                </Grid>
               </Grid>
-            </Grid>
-
-            <Grid item sm={6}>
-              <Paper style={{overflow:"hidden", position:'relative', padding:"0px 0px", background:"rgba(0,0,0,.5)"}} elevation={0}>
-                <InputBase style={{ padding:'4px 8px', position:'relative', width:"100%"}}
-                startAdornment={<SearchRounded/>}/>
-              </Paper>
-            </Grid>
-
-            <Grid item>
-                <div>
-                  <Button to={"/products/product"} component={Link} variant={"contained"} size={"large"}>
-                    <Add/>
-                    <Typography color={"inherit"}>CREATE</Typography>
-                  </Button>
-                </div>
-            </Grid>
-          </Grid>
-
-      </React.Fragment>
+          </Toolbar>
+        </Paper>
     );
 
     let productsAvailable = (
       <React.Fragment>
-          {productMenu}
-        <Toolbar style={{marin:"16px 0px"}}>
-          {defaultToolbar}
-        </Toolbar>
+        {productMenu}
+        {this.state.selected.length !== 0
+            ? selectedProductOptionToolBar
+            : defaultToolbar }
+
+
         <Grid container justify={"center"}>
-          <Grid item xs={11}>
+          <Grid item xs={12}>
             {this.state.products.map((product, i) => (
-                <Paper style={{margin:"8px 0px", padding:12}} elevation={1}>
+                <Paper style={{margin:"8px 0px", padding:4}} elevation={1}>
                   <Grid container alignItems={"center"} justify={"space-between"}>
                     <Grid item xs={12} md={6}>
                       <Grid container>
@@ -199,7 +200,7 @@ class TableProductsView extends React.Component {
                           <IconButton>
                             <FaProductHunt/>
                           </IconButton>
-                          {"product.title product heere"}
+                          {product.title}
                         </Grid>
                       </Grid>
                     </Grid>
@@ -233,10 +234,13 @@ class TableProductsView extends React.Component {
     );
 
     let productsNotAvailable = (
-      <div>
+      <div align="center">
         <Typography align={"center"}>
           You dont have any products yet, click the button above to add some.
         </Typography>
+        <Button to={`/stores/${this.context.store.id}/products/new`} component={Link} variant={"contained"} size={"large"} style={{margin:"16px 0px"}}>
+          <Add/> CREATE
+        </Button>
       </div>
     );
 

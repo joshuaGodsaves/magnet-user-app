@@ -44,8 +44,6 @@ export default class Component extends React.Component{
     onFinish= ()=>{
         this.props.closeProductSelector(this.state.selected)
     }
-
-
     componentWillMount() {
        let open=  this.props.open
         this.setState({open: open})

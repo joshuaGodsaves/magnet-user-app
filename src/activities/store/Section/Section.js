@@ -25,6 +25,7 @@ import axios from "axios";
 import StoreContext from "../StoreContext";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
 import ProductSelectionComponent from "../components/ProductSelectionComponent"
+import {APIURL} from "../../../DataSource";
 
 let styles = {
   listItem: {
@@ -94,7 +95,7 @@ class Section extends React.Component {
     let {match: {params}} = this.props
     axios
         .put(
-            `http://localhost:5000/api/store/${this.context.store.id}/section/${params.section}`,
+            `${APIURL}/store/${this.context.store.id}/section/${params.section}`,
             this.state.section,
             {
               headers: {
@@ -129,7 +130,6 @@ class Section extends React.Component {
   loadSection = async (sectionID) => {
     let section;
         section= await axios.get(`http://localhost:5000/api/store/${this.context.store.id}/section/${sectionID}`)
-
     if(!section){
       console.log("error")
       return
@@ -159,21 +159,23 @@ class Section extends React.Component {
     }
   }
   save =async  ()=>{
-    let section = await axios.post(`http://localhost:5000/api/store/${this.context.store.id}/section`,
+    let section = await axios.post(`${APIURL}/store/${this.context.store.id}/section`,
         this.state.section,
         {
           headers: {
             "X-auth-license": this.context.store.token
           }
-        })
-    let sectionid=section.data.items[section.data.items.length-1]._id
+        });
+    let sections = await axios.get(`${APIURL}/store/${this.context.store.id}/section`)
+    let data= sections.data;
+    console.log(data);
+    let sectionid= data.items[data.items.length-1]._id;
+    console.log(data.items.length);
 
-    window.location.replace(`http://localhost:3000/stores/${this.context.store.id}/sections/${sectionid}`)
+    window.location.replace(`http://localhost:3000/stores/${this.context.store.id}/sections/${sectionid}`);
 
   }
-
   openProductsDialog= ()=>{
-
     this.setState({productsDialogOpen: true})
   }
 
@@ -250,10 +252,10 @@ class Section extends React.Component {
     );
 
     let productsComponent = (
-          <Grid container   spacing={8}>
+          <Grid container  spacing={8}>
             {this.state.section.items.map(v=> (
                 <Grid item xs={6}>
-                  <Paper style={{margin:"16px 0px"}} elevation={1}>
+                  <Paper style={{margin:"8px 0px"}} elevation={1}>
                     <Grid container alignItems={"center"}>
                       <Grid item>
                         <Checkbox/>
@@ -271,26 +273,30 @@ class Section extends React.Component {
 
     return (
       <React.Fragment>
-        {this.state.productsDialogOpen ? <ProductSelectionComponent open={this.state.productsDialogOpen} closeProductSelector={this.closeProductSelector}/>: "" }
-        <PageAppBar nospacing>
-            <Tabs
-              style={{ padding: 0 }}
-              variant={"scrollable"}
-              value={this.state.currentTab}
-              onChange={this.tabChange}
-            >
-              <Tab label={"Primary"} style={{ color: "black" }} />
-              <Tab label={"products"} style={{  color: "black" }} />
-            </Tabs>
-            <div>
-              <IconButton onClick={this.openProductsDialog} style={{background:"ghostwhite"}}>
-                <FaPlus/>
-              </IconButton>
-              <Button onClick={this.state.isNewSection? this.save : this.update}> {this.state.isNewSection? "Save" : "Update"}</Button>
-            </div>
-        </PageAppBar>
+        {this.state.productsDialogOpen ? <ProductSelectionComponent
+            open={this.state.productsDialogOpen}
+            closeProductSelector={this.closeProductSelector}/>: "" }
         <Grid container style={{padding: "24px 0"}} justify={"center"}>
-          <Grid item xs={10}>
+          <Grid xs={10} md={10}>
+            <PageAppBar nospacing>
+              <Tabs
+                  style={{ padding: 0 }}
+                  variant={"scrollable"}
+                  value={this.state.currentTab}
+                  onChange={this.tabChange}
+              >
+                <Tab label={"Primary"} style={{ color: "black" }} />
+                <Tab label={"products"} style={{  color: "black" }} />
+              </Tabs>
+              <div>
+                <IconButton onClick={this.openProductsDialog} style={{background:"ghostwhite"}}>
+                  <FaPlus/>
+                </IconButton>
+                <Button onClick={this.state.isNewSection? this.save : this.update}> {this.state.isNewSection? "Save" : "Update"}</Button>
+              </div>
+            </PageAppBar>
+          </Grid>
+          <Grid item xs={10} md={10}>
         {this.state.currentTab == 0 && primaryComponent}
             {this.state.currentTab == 1 && productsComponent}
           </Grid>
@@ -299,5 +305,6 @@ class Section extends React.Component {
     );
   }
 }
+
 
 export default withStyles(styles)(Section);

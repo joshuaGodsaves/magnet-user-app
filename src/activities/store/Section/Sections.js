@@ -126,7 +126,7 @@ class TableProductsView extends React.Component {
         </Paper>
     );
 
-    let productsAvailable = (
+    let sectionsAvailable = (
         <React.Fragment>
             {this.state.selected.length !== 0
                 ? selectedCategoriesOptionToolBar
@@ -161,11 +161,14 @@ class TableProductsView extends React.Component {
             </Grid>
         </React.Fragment>
     );
-    let productsNotAvailable = (
-        <div>
+    let sectionsNotAvailable = (
+        <div align="center">
           <Typography  align={"center"}>
             You dont have any products yet, click the button above to add some.
           </Typography>
+            <Button variant={"contained"} style={{margin:"16px 0px"}} component={Link} to={`/stores/${this.context.store.id}/sections/new`}>
+                Create Section
+            </Button>
         </div>
     );
     return (
@@ -173,8 +176,8 @@ class TableProductsView extends React.Component {
           {this.state.loading? <LinearProgress/> :
               <div>
             {this.state.sections.length == 0
-                ? productsNotAvailable
-                : productsAvailable}
+                ? sectionsNotAvailable
+                : sectionsAvailable}
           </div>
           }
 

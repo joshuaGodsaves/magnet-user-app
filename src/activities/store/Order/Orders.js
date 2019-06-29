@@ -178,7 +178,7 @@ class TableProductsView extends React.Component {
                 ? selectedCategoriesOptionToolBar
                 : defaultToolbar}
             <Grid container justify={"center"}>
-              <Grid item xs={11}>
+              <Grid item xs={12}>
                 {this.state.orders.map((v, i) => (
                     <Paper style={{margin:"8px 0px"}} elevation={1}>
                       <Grid container alignItems={"center"} justify={"space-between"}>

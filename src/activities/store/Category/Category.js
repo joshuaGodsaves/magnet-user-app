@@ -8,7 +8,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  FormLabel,
+  FormLabel, Paper,
   FormHelperText,
   OutlinedInput as Input,
   InputBase,
@@ -49,10 +49,10 @@ let styles = {
     justifyContent: "space-between"
   },
   primaryFormArea: {
-    padding: "16px 32px"
+    padding: "12px 18px"
   },
   rootFormControls: {
-    margin: "8px 0"
+    margin: "4px 0"
   },
   flexBetween: {
     display: "flex",
@@ -182,63 +182,67 @@ class Category extends React.Component {
                 selectSingle={this.selectMainImage}
                 closeingDrawer={this.closeingMainImageDrawer}/> : ""}
         <Grid container>
-          <Grid item sm={7} xs={12}>
+          <Grid item sm={6} xs={12}>
             <div className={classes.primaryFormArea}>
-              <FormControl fullWidth className={classes.rootFormControls}>
-                <FormLabel>Category title</FormLabel>
-                <Input
-                    value={this.state.category.title}
-                    onChange={this.watchInput("title")}
+              <Paper style={{padding:16}}>
+                <FormControl fullWidth className={classes.rootFormControls}>
+                  <FormLabel>Category title</FormLabel>
+                  <Input
+                      value={this.state.category.title}
+                      onChange={this.watchInput("title")}
+                  />
+                  <FormHelperText></FormHelperText>
+                </FormControl>
+                <FormControl fullWidth className={classes.rootFormControls}>
+                  <FormLabel>Category Caption</FormLabel>
+                  <Input
+                      value={this.state.category.caption}
+                      onChange={this.watchInput("caption")}
+                  />
+                  <FormHelperText></FormHelperText>
+                </FormControl>
+              </Paper>
+
+              <Paper  style={{padding:16, margin:"16px 0px"}}>
+                <Typography variant={"subtitle1"}> Category Description</Typography>
+                <CKEditor
+                    editor={ClassicEditor}
+                    style={{ width:"100%",height:"100%"}}
                 />
-                <FormHelperText></FormHelperText>
-              </FormControl>
-              <FormControl fullWidth className={classes.rootFormControls}>
-                <FormLabel>Category Caption</FormLabel>
-                <Input
-                    value={this.state.category.caption}
-                    onChange={this.watchInput("caption")}
-                />
-                <FormHelperText></FormHelperText>
-              </FormControl>
-              <Typography variant={"subtitle1"}> Category Description</Typography>
-              <CKEditor
-                  editor={ClassicEditor}
-                  onChange={(editor, dataw, data) => {
-                    console.log(data)
-                    // this.setState({
-                    // product: {description:data}
-                    // })
-                  }}
-                  style={{ width:"100%",height:"100%"}}
-              />
+              </Paper>
               <div />
             </div>
           </Grid>
-          <Grid item sm={5} xs={12}
-                style={{height: "500%", background: "ghostwhite"}}
+          <Grid item sm={6} xs={12}
+                style={{}}
           >
             <Grid container>
-              <Grid item xs={12} style={{display:"flex", alignItems:"center", justifyContent:"center", flexDirection:"column", padding:"32px 0px"}}>
-                <div style={{width:200, height:200, background: "grey"}}>
-                </div>
-                <div style={{padding:"0px 0px"}}>
-                  <IconButton><UploadIcon/></IconButton>
-                  <IconButton onClick={this.openSelectMainImageDrawer}><SelectIcon/></IconButton>
-                  <IconButton><LinkIcon/></IconButton>
-                </div>
+              <Grid item xs={12} style={{display:"flex", alignItems:"center", justifyContent:"center", flexDirection:"column"}}  className={classes.primaryFormArea}>
+                <Paper style={{width:"100%", display:"flex", justifyContent:"center"}}>
+                  <div>
+                    <div style={{width:200, height:200, background: "grey"}}>
+                    </div>
+                    <div style={{padding:"0px 0px"}}>
+                      <IconButton><UploadIcon/></IconButton>
+                      <IconButton onClick={this.openSelectMainImageDrawer}><SelectIcon/></IconButton>
+                      <IconButton><LinkIcon/></IconButton>
+                    </div>
+                  </div>
+                </Paper>
               </Grid>
-              <Grid item xs={12}><Divider/></Grid>
-              <Grid item style={{padding:24}}  xs={12}>
-                <Typography> Core Options</Typography>
-                <FormControl fullWidth>
-                  <InputBase
-                      multiline
-                      style={{ background: "white", padding: "16px" }}
-                  />
-                  <FormHelperText>
-                    Enter product tags and seperate with spaces
-                  </FormHelperText>
-                </FormControl>
+              <Grid item  xs={12} className={classes.primaryFormArea}>
+                <Paper style={{padding: 12}}>
+                  <Typography> Core Options</Typography>
+                  <FormControl fullWidth>
+                    <InputBase
+                        multiline
+                        style={{ background: "white", padding: "16px" }}
+                    />
+                    <FormHelperText>
+                      Enter product tags and seperate with spaces
+                    </FormHelperText>
+                  </FormControl>
+                </Paper>
               </Grid>
             </Grid>
           </Grid>

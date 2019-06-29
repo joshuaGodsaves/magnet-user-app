@@ -2,7 +2,7 @@ import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography";
 import {Add, Collections as Group, Delete, Edit, MoreHoriz, Refresh} from "@material-ui/icons";
-import {FaProductHunt} from "react-icons/fa"
+import {FaProductHunt} from "react-icons/fa/index"
 import {Link} from "react-router-dom";
 import StoreContext from "../StoreContext"
 import {
@@ -13,12 +13,8 @@ import {
     LinearProgress,
     Paper, Button,
     Table, Toolbar,
-    TableBody,
-    TableCell,
-    TableHead,
     TableRow, Grid, Chip
 } from "@material-ui/core";
-import AppToolBar from "../../../components/AppToolBar"
 import DataSource from "../../../DataSource"
 
 let styles = {
@@ -108,7 +104,7 @@ class TableProductsView extends React.Component {
 
     let defaultToolbar = (
         <Paper>
-          <Toolbar style={{display:'flex', justifyContent:"space-between"}}>
+          <Toolbar style={{display:'flex', justifyContent:"space-between"}} >
             <Typography variant={"h6"}>
               Store categories
             </Typography>
@@ -133,11 +129,10 @@ class TableProductsView extends React.Component {
             {this.state.selected.length !== 0
                 ? selectedCategoriesOptionToolBar
                 : defaultToolbar}
-
-            <Grid container justify={"center"}>
+            <Grid container spacing={8} style={{margin:"16px 0px"}}>
                 {this.state.categories.map((category, i) => (
-                <Grid item xs={12} md={6}>
-                        <Paper style={{margin:"8px 8px"}} elevation={1}>
+                <Grid item xs={12} md={6} style={{margin:"8px 0px"}}>
+                        <Paper elevation={1}>
                             <Grid container alignItems={"center"} justify={"space-between"} spacing={8}>
                                 <Grid item>
                                     <Checkbox
@@ -145,8 +140,6 @@ class TableProductsView extends React.Component {
                                         checked={this.state.selected.some(v2 => v2 == category._id)}
                                         onChange={this.selectSingle(category._id)}
                                     />
-                                </Grid>
-                                <Grid item>
                                     <IconButton>
                                         <FaProductHunt/>
                                     </IconButton>
@@ -168,6 +161,9 @@ class TableProductsView extends React.Component {
           <Typography  align={"center"}>
             You dont have any products yet, click the button above to add some.
           </Typography>
+            <Button>
+                Create Category
+            </Button>
         </div>
     );
     return (
